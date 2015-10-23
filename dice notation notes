@@ -1,0 +1,212 @@
+https://rolz.org/
+https://wiki.roll20.net/Dice_Reference
+http://s1093.photobucket.com/user/thexder42x/media/SWDicestickers_zps4ce56750.jpg.html
+http://spartans.org.uk/x-wing-basic-tactics/
+
+
+std notation - NdX
+chained - NdX+NdX
+precentile - d%
+fudge - NdF
+---adders---
+re-roll - rY
+explode - !Y
+drop lowest - vY
+keep lowest - ^Y
+success counting - tY
+    success cancel - c
+    success bonus - a
+add number - +Y
+
+d%+4dF+5d8+4+6d12r3t6cav2^4!
+
+Explaination for faq page
+
+Advanced Dice Options
+
+These are the advanced options for rolling dice at Myth-Weavers. If you're new here, make certain you read the Dice Basics help article first before jumping in here. If you are looking for the different ways to display dice rolls, check out the Dice Tag Summary article as well.
+
+All of the options here are just that -- optional. You can probably get by just using the basic dice for everything, but these options can help automate and speed your games along if you're willing to take the time to learn how to use them.
+
+With the exception of the "repeat rolls" option, all of these options are added after the basic XdY+Z part of the roll, and can be added in any order. If the option requires a number and none is provided, the system will treat it as if a "1" had been used.
+
+Also, you can use multiple options at the same time.
+
+Here is a basic list of the available advanced dice options, explained in more detail below.
+
+    Drop Dice - v Number - Drops the lowest "number" of dice in a roll.
+    Keep Dice - ^ Number - Keeps the lowest "number" of dice in a roll.
+    Reroll Dice - r Number - Rerolls any dice that come up equal to or lower than "number."
+    Exploding - e - Adds an extra dice every time a die comes up as the maximum.
+    Success-Counting - s Number - Counts as successes the number of dice that land equal to or higher than "number."
+        Success-Canceling - c - Cancels out a success every time a die lands on "1" (the minimum).
+        Bonus Successes - a - Adds a success every time a die lands on the maximum for that dice type.
+    Fate/Fudge dice - F - Rolls dice for the Fate system (-1, 0 or +1)
+
+
+A note on abbreviations -- For the sake of clarity in the following option explanations, the basic dice syntax of Number of Dice(x) d Number of Sides(y) + Modifier will be simplified just to XdY.
+Repeated Roll Sets
+
+This option allows you to roll multiple versions of the same dice-roll setup. This includes repeating all other advanced options for each version of the roll. The only difference between rolls sets will be how the dice themselves randomly turn out.
+
+NumbermXdY
+
+Numberm – In this case ‘number’ represents the number of times you would like to repeat the following roll.
+
+    Example 1: 3m4d6 ... means... "Roll four 6-sided dice three separate times."
+    Example 2: 10m3d20 ... means... "Roll three 20-sided dice ten separate times." 
+
+Drop dice
+
+This feature is used to "drop," which means to not count, a certain number of dice from the final result of a roll.
+
+XdYvNumber
+
+vNumber – In this case ‘number’ represents the number of lowest dice rolls you want to discard.
+
+    Example 1: 4d6v1 ... means... "Roll four 6-sided dice, then discard the 1 lowest die."
+    Example 2: 3d20v2 ... means... "Roll three 20-sided dice, then discard the 2 lowest dice." 
+
+Keep the Highest
+
+This option is used to "keep," which means to only count, a certain subset of the dice rolled, particularly the highest ones.
+
+XdY^Number
+
+^Number – In this case ‘number’ represents the number of highest dice rolls you want to keep.
+
+    Example 1: 4d6^3 ... means... "Roll four 6-sided dice, but only keep the 3 highest."
+    Example 2: 3d20^1 ... means... "Roll three 20-sided dice, but only keep the 1 highest." 
+
+Keep the Lowest
+
+This option is used to "keep," which means to only count, a certain subset of the dice rolled, particularly the lowest ones.
+
+XdYkNumber
+
+kNumber – In this case ‘number’ represents the number of lowest dice rolls you want to keep.
+
+    Example 1: 2d20k1 ... means... "Roll two 20-sided dice, but only keep the lowest."
+    Example 2: 6d20k3 ... means... "Roll six 20-sided dice, but only keep the 3 lowest." 
+
+Reroll
+
+This feature allows you to reroll all dice that come up a certain number or lower. Only the final results are shown.
+
+XdYrNumber
+
+rNumber – In this case ‘number’ represents the number you want to reroll.
+
+    Example 1: 4d6r1 ... means... "Roll four 6-sided dice and reroll any 1s that turn up."
+    Example 2: 3d20r5 ... means... "Roll three 20-sided dice, and reroll anything that comes up 5 or lower." 
+
+Multiply or Divide Total
+
+This option allows you to multiply or divide the result of roll, after all other modifications, by a set number. This number can be any number in decimal format, not just integers.
+
+XdY*Number
+
+    Number – In this case ‘number’ represents the number you want to multiply the dice results by. You can replace *Number with /Number if you wish to divide the dice results instead. 
+
+This option takes the place of the (+ or - Modifier) basic syntax, so you cannot use + or - in conjunction with * or /
+
+    Example 1: 4d6*1.5 ... means... "Roll four 6-sided dice, and then multiply the result by 1.5."
+    Example 2: 3d20*0.75 ... means... "Roll three 20-sided dice, and then multiply the result by 0.75."
+    Example 3: 4d6/1.5 ... means... "Roll four 6-sided dice, and then divide the result by 1.5."
+    Example 4: 3d20/0.75 ... means... "Roll three 20-sided dice, and then divide the result by 0.75." 
+
+Exploding Rolls
+
+This option causes the dice roller to roll an extra die whenever a die in your normal roll lands as the maximum for that dice type. For example, if you roll "10" on a ten-sided dice, this option will automatically roll you another 10-sided dice. If the extra dice rolled come up as the maximum, they also add an extra die.
+
+XdY+ZeN
+
+e - Does not require any associated number (in which case the highest number on the dice is the default). A target can be provided.
+
+    Example 1: 1d20e ... means ... "Roll one twenty sided die, and if it comes up as "20," roll another twenty-sided die."
+    Example 2: 4d10e .... means... "Roll four ten-sided dice, and whenever any of them come up "10," roll another ten-sided die."
+    Example 3: 3d10e8 ... means ... "Roll 3 ten-sided dice, and whenever any of them come up 8 or higher, roll another 
+
+Success-Counting
+
+This option will count the number of dice in a roll that meet or exceed a set number. If you are adding a modifier (e.g. +A or -B) to the roll, the modifier will be added to each individual die in a roll to see if they meet the success-number.
+
+XdYsNumber
+
+sNumber – In this case ‘number’ represents the number that the dice have to be equal to or greater than to count as a success.
+
+    Example 1: 4d10s7 ... means... "Roll four 10-sided dice, and count the number of times a die lands as 7 or higher.
+    Example 2: 5d100s75 ... means... "Roll five 100-sided dice, and count the number of times the a die is 75 or higher."
+    Example 3: 3d10+1s9 ... means... "Roll three ten-sided dice. If any one of those results plus one is equal to or greater than 9, count it as a success." 
+
+
+Canceling Successes
+
+This option causes a roll of the minimum on a die to cancel out a success. This can result in negative successes if there are more cancels than successes. Naturally, this option only works in combination with the success-counting option, explained above.
+
+XdYsNumberc
+
+c - Does not require any associated number.
+
+    Example 1: 4d10s7c ... means... "Roll four 10-sided dice, and count the number of times a die lands as 7 or higher. If a die lands as "1," remove a success."
+    Example 2: 5d100s75c ... means... "Roll five 100-sided dice, and count the number of times the a die is 75 or higher. If a die lands as "1," remove a success."
+    Example 3: 3d10+1s9c ... means... "Roll three ten-sided dice. If any one of those results plus one is equal to or greater than 9, count it as a success. If a die lands as "1," remove a success." 
+
+Adding Bonus Successes
+
+This option causes a roll of the maximum on a die to add an extra success. Naturally, this option only works in combination with the success-counting option, explained above. XdYsNumbera
+
+a - Does not require any associated number.
+
+    Example 1: 4d10s7a ... means... "Roll four 10-sided dice, and count the number of times a die lands as 7 or higher. If a die lands as "10," add an extra success."
+    Example 2: 5d100s75a ... means... "Roll five 100-sided dice, and count the number of times the a die is 75 or higher. If a die lands as "100," add an extra success."
+    Example 3: 4d10s7ac ... means "Roll four 10-sided dice, and count the number of times a die comes out 7 or higher. If a die lands as "10," add an extra success. If a die lands as "1," remove a success. 
+
+Counting Failures
+
+This option only works in conjunction with the s (success counting) flag, and will also count failures.
+
+    Example: 4d10s7x2 ... means... "Roll four 10-sided dice, and count as success the number of times a die lands as 7 or higher. In addition, count all rolls of 2 or less as failues. 
+
+
+Result-Checking Roll Text
+
+This option checks to see whether the roll meets or is less than a given number, and then picks between two sets of text to display. This option only works for the [Roll] tag, described in the dice tag summary article.
+
+[Roll=pass message text ; popup header text ; fail message text] XdYqNumber [/Roll]
+
+qNumber – If the dice roll total is greater than or equal to ‘number,’ the roll counts as a "pass" result, and the "pass message text" is displayed. If the roll total is less than 'number,' the roll counts as a "fail" result and the "fail message text" is displayed.
+
+For example, a character trying to attack something may want a different message to appear for the roll depending on whether or not it hit. In this example, the target number is 17.
+
+[Roll= Bob's sword lands solidly ; The Attack Roll ; Bob's sword swishes harmlessly through the air]1d20+5q17[/Roll]
+
+If the roll passes by totaling at least the target number, it would look like this... If the roll fails, it would look like this...
+Sum Total
+
+This option rolls all dice and adds them together.
+
+    Example 1: 1d8 1d4 2d6+5t means "Roll an eight-sided die, a four-sided die, and two six-sided dice plus five, and add all the results together."
+    Example 2: 1d4+3 1d6 14d6 1d6t means "Roll a four-sided die plus three, a six-sided die, fourteen more six-sided dice, and another six-sided die, and add all the results together." 
+
+Show Result
+
+This option shows the result of a roll (not dice) in the title, so a mouse over is not needed. The z must appear at the end of the flag list, and can be included in more than one dice within a roll tag.
+
+For example, "Bob [roll=attacks]1d20+4z[/roll] the troll" would show as Bob attacks (16) the troll (assuming the result was a 16)
+Under Success
+
+Counts how many steps of 10 (for 1d100) or 5 (for d20 ) or 1 (any other die) the result is compared to the threshold.
+
+    Example: 1d100u50 would give a result of "1 success" for any value 40-50 2 successes for 30-39, 3 success for 20-29 etc. It will also give 1 failure for 51-60, etc. 
+
+Ars Magica
+
+1d10bX Ars Magica involves a 1d10 roll. On a one (and successive 1s) the final non - one is multiplied by 2^number of ones. For example, a roll of 1,1,3 results in 4x3=12 (the two ones mean a x4 multiplier. Three ones would be a 8x multiplier) A 10 indicates a possible "botch". The number of botch dice is indicated by the number after the b (X).
+
+Note that the b flag automatically sets the dice to 1d10 regardless of what dice were originally rolled.
+Fate/Fudge Dice
+
+xdF
+
+Fate dice are a special syntax. Instead of a number representing the number of sides of the dice, use a capital F 

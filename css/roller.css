@@ -1,0 +1,105 @@
+DIV, BODY, HTML, SPAN, TD{
+    margin:0;
+    padding:0;
+    border:0;
+    vertical-align:baseline;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, Tahoma, sans-serif;
+}
+UL{
+    list-style-type:none;
+    margin:0;
+    padding:0;
+}
+#contain{
+    height:100%;
+    width:100%;
+    max-height:467px;
+    max-width:731px;
+    padding:4.17%;
+    overflow:hidden;
+}
+#contain > DIV{
+    height:100%;
+    float:left;
+    min-height:362px;
+}
+#roller{
+    border:4px solid black;
+    border-right-width:2px;
+    width:52%;
+    min-width:315px;
+    padding:10px;
+}
+#list{
+    border:4px solid black;
+    border-left-width:2px;
+    width:48%;
+    min-width:300px;
+    padding:10px;
+    overflow:hidden;
+}
+#list LI{
+    margin:2px 0;
+    width:100%;
+}
+#list LI:hover{
+    background:#555;
+    color:#fff;
+    cursor:default;
+}
+#listCont{
+    width:100%;
+    height:334px;
+    background:#eee;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+#roller DIV{
+    text-align:center;
+}
+#roller INPUT{
+    width:230px;
+}
+DIV#result{
+    height:80%;
+    text-align:left;
+    overflow-y:auto;
+}
+SPAN#delete{
+    float:right;
+    color:#eee;
+    margin-right:4px;
+    width:15px;
+    text-align:center;
+}
+SPAN#delete:hover{
+    background:#999;
+    color:#555;
+    cursor:default;
+    border-radius:50%;
+}
+SPAN.disabled{
+    color:#f22;
+}
+SPAN.max{
+    color:#2f2;
+}
+DIV#helpBlur{
+    width:100%;
+    padding:10%;
+    background:#000;
+    opacity: 0.8;
+    top:0;
+    left:0;
+    position:absolute;
+    z-index:1000;
+}
+PRE#helpContain{
+    background:#fff;
+    opacity:1;
+}
+.template{
+    display:none;
+}
