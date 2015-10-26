@@ -1,3 +1,4 @@
+// Working on turning into modules and will Reactify it ultimately
 var Roller = (function(){
     var error = 'Check Input',
         saved = localStorage.savedRolls ? JSON.parse(localStorage.savedRolls): {},
