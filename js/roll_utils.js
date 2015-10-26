@@ -16,7 +16,7 @@ Roller = (function(me){
     lib.parseText = function(roll){
         var dice = {};
         roll = roll.split(/([+v^r!act])/);
-        //console.log(roll);
+        console.log(roll);
         if(roll.length == 1){
             temp = this.getDice(roll[0]);
             dice[roll[0]] = this.rollDice(roll[0],temp);

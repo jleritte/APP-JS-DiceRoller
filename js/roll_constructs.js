@@ -19,7 +19,7 @@ Roller = (function(me){
             lib.loadFavicon();
         }
         lib.loadTemplate('roller.template.html',where);
-        connectKey();
+        lib.connectKey();
         me._seal();
     };
 	lib.loadTemplate = function(url,where){
