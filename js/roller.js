@@ -6,8 +6,8 @@ var Roller = (function(){
     me = {
       init:function(where){
         loadStyles('css/roller.css');
-        loadScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js',function(where){
-          loadUtils(where);
+        loadScript('js/roll_utils.js',function(where){
+          loadDomUtils(where);
         });
       },
       _private:{error:error,saved:saved,lib:lib}

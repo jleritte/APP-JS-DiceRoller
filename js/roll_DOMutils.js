@@ -18,27 +18,22 @@ Roller = (function(me){
     if(result !== error){
       dice = this.parseText(result);
       this.processAdders(dice);
-      $('#result').html(this.formatResult(dice));
+      window.result.innerHTML = this.formatResult(dice);
       var clear = document.createElement('button');
-      $('#result')
-        .append(
-          $(clear)
-            .text('Clear')
-            .click(function(){
-              lib.clearResult($(this).parent());
-            })
-        );
+      clear.textContent = 'Clear';
+      clear.addEventListener('click',lib.clearResult);
+      window.result.appendChild(clear);
     }
     else{
-      $('#result').text(result);
+      window.result.innerHTML = result;
     }
   };
-  lib.clearResult = function(div){
-    $('input').val('');
-    div.empty();
+  lib.clearResult = function(){
+    document.querySelector('#roll').value = '';
+    window.result.innerHTML = '';
   };
   lib.saveRoll = function(){
-    var mtch = false,where, save = this.grabText();
+    var mtch = false,where, save = lib.grabText();
     if(save !== error){
       var name = prompt("Enter Name For Roll",save);
       if(name === null) {
@@ -56,34 +51,35 @@ Roller = (function(me){
         }
         saved[name] = save;
         if(!mtch){
-          var li = $($('li.template')).clone(true);
-          $(li).find('span').click(function () {
-            lib.deleteRoll(li);
-          });
-          $('#saved')
-            .append(
-              $(li)
-                .removeClass('template')
-                .append(name)
-                .dblclick(function(){
-                  lib.fillInput(this);
-                })
-          );
+        var template = document.querySelector('template.save'),
+            list = document.querySelector('ul.saved'),
+            li = document.importNode(template.content,true);
+      list.appendChild(li);
+      li = list.lastElementChild;
+      li.firstElementChild.addEventListener('click',deleteR);
+      li.appendChild(document.createTextNode(save));
+      li.addEventListener('dblclick',fillI);
         }
       }else{
         alert("Already saved as "+where);
       }
     }
     localStorage.savedRolls = JSON.stringify(saved);
+    function deleteR(e) {
+      lib.deleteRoll(e.target);
+    }
+    function fillI(e) {
+      lib.fillInput(e.target);
+    }
   };
   lib.deleteRoll = function(roll){
-    var save = $(roll).parent().text();
+    var save = roll.parentElement.textContent;
     for(var rll in saved){
       if('x'+rll === save){
         delete saved[rll];
       }
     }
-    $(roll).parent().remove();
+    roll.parentElement.parentElement.removeChild(roll.parentElement);
     localStorage.savedRolls = JSON.stringify(saved);
   };
   lib.formatResult = function(dice){
@@ -116,7 +112,7 @@ Roller = (function(me){
     return result;
   };
   lib.grabText = function(){
-    var roll = $('#roll').val();
+    var roll = document.querySelector('#roll').value;
     var splt = roll.split('d');
     if(splt.length > 1){
       return roll;

@@ -18,26 +18,65 @@ Roller = (function(me){
     if(where === 'body'){
       lib.loadFavicon();
     }
-    lib.loadTemplate('js/roller.template.html',where);
+    where = document.querySelector(where);
+    lib.loadTemplate(where);
     lib.connectKey();
     me._seal();
   };
-  lib.loadTemplate = function(url,where){
-    $(where).load(url,function(){
-      $('input').click(function(){
-        $(this).select();
-      });
-      lib.connectButton($('#save'));
-      lib.fillSaved();
-    });        
+  lib.loadTemplate = function(where){
+    var templates = {
+  "game": ["<div id=\"contain\">",
+      "<div id=\"roller\">",
+        "<div>Type Roll below - Press F1 for Help</div>",
+        "<input id=\"roll\" type=\"text\"></input>",
+        "<button id=\"save\">Save</button>",
+        "<div id=\"result\"></div>",
+      "</div>",
+      "<div id=\"list\">",
+        "<div id=\"listCont\">",
+          "<ul class=\"saved\"></ul>",
+        "</div>",
+      "</div>",
+    "</div>"],
+  "save": ["<li><span id=\"delete\">x</span></li>"],
+  "help": ["<div id=\"helpBlur\">",
+      "<pre id='helpContain'>",
+"Drop Dice - v Number - Drops the lowest \"number\" of dice in a roll.",
+"Keep Dice - ^ Number - Keeps the lowest \"numbers\" of dice in a roll.",
+"Reroll Dice - r Number - Rerolls any dice that come up equal to or lower than \"number.\"",
+"Exploding - ! - Adds an extra dice every time a die comes up as the maximum.",
+"Success-Counting - t Number - Counts as successes the number of dice that land equal to or higher than \"number.\"",
+"  Success-Canceling - c - Cancels out a success every time a die lands on \"1\" (the minimum).",
+"  Bonus Successes - a - Adds a success every time a die lands on the maximum for that dice type.",
+"Fate/Fudge dice - F - Rolls dice for the Fate system (-1, 0 or +1)</pre>",
+    "</div>"]
+},//require('./templates'),
+        keys = Object.keys(templates);
+
+    keys.forEach(function(elem){
+      var template = document.createElement('template');
+
+      template.innerHTML = templates[elem].join("\n");
+      if(elem === "game") {
+        where.appendChild(document.importNode(template.content,true));
+      } else {
+        template.className = elem;
+        where.appendChild(template);
+      }
+    });
+    document.querySelector('input').addEventListener('focus',function(e){
+      e.target.select();
+    }); 
+    lib.connectButton(document.querySelector('#save'));
+    lib.fillSaved();
   };
   lib.connectKey = function(){
-    $(window).keypress(function(e){
+    document.addEventListener('keypress',function(e){
       if(e.keyCode === 13){
         lib.getResult();
       }
       else if(e.keyCode === 27){
-        lib.clearResult($('#result'));
+        lib.clearResult();
       }
       else if(e.keyCode === 112){
         console.log(e.keyCode);
@@ -46,42 +85,41 @@ Roller = (function(me){
     });
   };
   lib.connectButton = function(butt){
-    $(butt).click(function(){lib.saveRoll();});
+    butt.addEventListener('click', lib.saveRoll);
   };
   lib.fillSaved = function(){
+    var template = document.querySelector('template.save'),
+        list = document.querySelector('ul.saved');
     for(var roll in saved){
-      var li = $($('li.template').clone(true));
-      $(li).find('span').click(deleteR);
-      $('#saved')
-        .append(
-          $(li)
-            .removeClass('template')
-            .append(roll)
-            .dblclick(fillI)
-        );
+      var li = document.importNode(template.content,true);
+      list.appendChild(li);
+      li = list.lastElementChild;
+      li.firstElementChild.addEventListener('click',deleteR);
+      li.appendChild(document.createTextNode(roll));
+      li.addEventListener('dblclick',fillI);
     }
-    function deleteR() {
-      lib.deleteRoll(this);
+    function deleteR(e) {
+      lib.deleteRoll(e.target);
     }
-    function fillI() {
-      lib.fillInput(this);
+    function fillI(e) {
+      lib.fillInput(e.target);
     }
   };
   lib.fillInput = function(roll){
-    var str = $(roll).text();
+    var str = roll.textContent;
     str = str.substring(1,str.length);
-    $('#roll').val(saved[str]);
+    document.querySelector('#roll').value = saved[str];
     this.getResult();
   };
   lib.toggleHelp = function(){
-    if($('.help').length === 0){
-      var help = $('div.template').clone();
-      $('#roller').before(
-        $(help).removeClass('template').addClass('help')
-      );
+    if(document.querySelectorAll('.help').length === 1){
+      var help = document.importNode(document.querySelector('template.help').content,true);
+      window.contain.insertBefore(help,window.roller);
+      help = window.contain.firstElementChild;
+      help.className = 'help';
     }
     else{
-      $('.help').remove();
+      window.contain.removeChild(window.contain.firstElementChild);
     }
   };
   lib.loadFavicon = function(){
