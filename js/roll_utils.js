@@ -101,7 +101,7 @@ Roller = (function(me){
   lib.processAdders = function(dice){
     var keys = Object.keys(dice);
 
-    keys.forEach(function(mod){
+    keys.forEach(function(mod,i){
       if(mod.length === 1) {
         if(mod === 'r'){
           lib.reRollDice(dice,dice[mod]);
@@ -270,7 +270,9 @@ Roller = (function(me){
       }
     }
     Object.keys(dice).forEach(function(mod){
-      delete dice[mod];
+      if(mod.length === 1) {
+        delete dice[mod];
+      }
     });
     dice.Success = success;
   };
@@ -289,7 +291,7 @@ Roller = (function(me){
           }
         }
         else{
-          total += dice[key];
+          total += key === '+'?parseInt(dice[key]):0;
         }
       }
     }

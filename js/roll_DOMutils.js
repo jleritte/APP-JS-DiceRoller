@@ -18,7 +18,6 @@ Roller = (function(me){
     if(result !== error){
       dice = this.parseText(result);
       this.processAdders(dice);
-      //console.log(dice);
       $('#result').html(this.formatResult(dice));
       var clear = document.createElement('button');
       $('#result')
@@ -78,13 +77,13 @@ Roller = (function(me){
     localStorage.savedRolls = JSON.stringify(saved);
   };
   lib.deleteRoll = function(roll){
-    var save = $(roll).text();
+    var save = $(roll).parent().text();
     for(var rll in saved){
       if('x'+rll === save){
         delete saved[rll];
       }
     }
-    $(roll).remove();
+    $(roll).parent().remove();
     localStorage.savedRolls = JSON.stringify(saved);
   };
   lib.formatResult = function(dice){

@@ -61,7 +61,7 @@ Roller = (function(me){
         );
     }
     function deleteR() {
-      lib.deleteRoll(li);
+      lib.deleteRoll(this);
     }
     function fillI() {
       lib.fillInput(this);
@@ -89,7 +89,7 @@ Roller = (function(me){
     icon.rel = 'icon';
     icon.type = 'image/x-icon';
     icon.href = './img/favicon.ico';
-    var entry = document.getElementsByTagName('script')[0];
+    var entry = document.getElementsByTagName('title')[0];
     entry.parentNode.insertBefore(icon, entry);
   };
 

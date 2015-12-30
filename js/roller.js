@@ -17,7 +17,7 @@ var Roller = (function(){
     link.rel = 'stylesheet';
     link.type = 'text/css';
     link.href = url;
-    var entry = document.getElementsByTagName('script')[0];
+    var entry = document.getElementsByTagName('title')[0];
     entry.parentNode.insertBefore(link, entry);
   }
   function loadScript(url, callback){
