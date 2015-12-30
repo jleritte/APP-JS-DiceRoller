@@ -18,7 +18,7 @@ Roller = (function(me){
         if(where === 'body'){
             lib.loadFavicon();
         }
-        lib.loadTemplate('roller.template.html',where);
+        lib.loadTemplate('js/roller.template.html',where);
         lib.connectKey();
         me._seal();
     };

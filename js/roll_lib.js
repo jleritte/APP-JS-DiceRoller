@@ -52,7 +52,7 @@ Roller = {
         if(where === 'body'){
             this.loadFavicon();
         }
-        this.loadTemplate('./roller.template.html',where);
+        this.loadTemplate('js/roller.template.html',where);
         this.connectKey();
         //this.connectButton($('#save'));
         //this.fillSaved();
