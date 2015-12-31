@@ -1,3 +1,5 @@
+// var DicePool = require('./DicePool.js');
+
 // Working on turning into modules and will Reactify it ultimately
 var Roller = (function(){
   var error = 'Check Input',
