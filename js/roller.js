@@ -42,11 +42,6 @@ var Roller = (function(){
       lib.buildGUI(where);
     });
   }
-  function loadUtils(where) {
-    loadScript('js/roll_utils.js', function(){
-      loadDomUtils(where);
-    });
-  }
   function loadDomUtils(where) {
     loadScript('js/roll_DOMutils.js', function(){
       loadConstructs(where);
