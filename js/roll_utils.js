@@ -16,27 +16,54 @@ Roller = (function(me){
 /*Moving to Dicepool*/
   lib.parseText = function(roll){
     var dice = {};
-    roll = roll.split(/([+v^r!act])/);
-    console.log(roll);
-    if(roll.length === 1){
-      temp = this.getDice(roll[0]);
-      dice[roll[0]] = this.rollDice(roll[0],temp);
-    }
-    else{
-      for(var i = 0;i < roll.length;i+=2){
-        temp = this.getDice(roll[i]);
-        if(Array.isArray(temp)){
-          dice[roll[i]] = this.rollDice(roll[i],temp);
-        }
-        else{
-          dice[roll[i-1]] = temp;
-        }
+    roll = lib.matchParenthese(roll);
+    roll.forEach(function(e,i,a){
+      e = e.split(/([+])/);
+      if(e[0] === ''){
+        e.shift();
       }
-    }
-    if(!dice.hasOwnProperty('+')){
-      dice['+'] = 0;
-    }
+      a[i] = e;
+    });
+    console.log(roll);
+    roll = [].concat.apply([],roll);
+    // roll = roll.filter(function(e){
+    //   return e !== '+';
+    // });
+    // roll = roll.split(/([+v^r!act])/);
+    console.log(roll);
+    // if(roll.length === 1){
+    //   temp = this.getDice(roll[0]);
+    //   dice[roll[0]] = this.rollDice(roll[0],temp);
+    // }
+    // else{
+    //   for(var i = 0;i < roll.length;i+=2){
+    //     temp = this.getDice(roll[i]);
+    //     if(Array.isArray(temp)){
+    //       dice[roll[i]] = this.rollDice(roll[i],temp);
+    //     }
+    //     else{
+    //       dice[roll[i-1]] = temp;
+    //     }
+    //   }
+    // }
+    // if(!dice.hasOwnProperty('+')){
+    //   dice['+'] = 0;
+    // }
     return dice;
+  };
+  lib.matchParenthese = function(string){
+    var pat = /(.*)\((.*?)\)(.*)/,
+        pools = [];
+    while(string.match(/\(/)){
+      string = string.match(pat);
+      string.shift();
+      pools.push(string.splice(1,1).join(''));
+      string = string.join('');
+    }
+    if(string){
+      pools.push(string);
+    }
+    return pools;
   };
   lib.getDice = function(note){
     var num,sides,dice =[];
@@ -106,15 +133,25 @@ Roller = (function(me){
       if(mod.length === 1) {
         if(mod === 'r'){
           lib.reRollDice(dice,dice[mod]);
+          delete dice[mod];
         }
+      }
+    });
+    keys.forEach(function(mod,i){
+      if(mod.length === 1) {
         if(mod === '!'){
           lib.explodeRoll(dice,dice[mod]);
+          delete dice[mod];
         }
+      }
+    });
+    keys.forEach(function(mod,i){
+      if(mod.length === 1) {
         if(mod === 'v'){
-          lib.dropLowest(dice,dice[mod]);
+          lib.keepLowest(dice,dice[mod]);
         }
         if(mod === '^'){
-          lib.keepLowest(dice,dice[mod]);
+          lib.keepHighest(dice,dice[mod]);
         }
         if(mod === 't'){
           lib.countSuccess(dice,dice[mod]);
@@ -177,7 +214,7 @@ Roller = (function(me){
       }
     }
   };
-  lib.dropLowest = function(dice,cnt){
+  lib.keepHighest = function(dice,cnt){
     var i;
     cnt =  isNaN(parseInt(cnt))?1:parseInt(cnt);
     for(var key in dice){
@@ -189,9 +226,10 @@ Roller = (function(me){
             actv.push(i);
           }
         }
-        tote = actv.length;
-        for(var j = 0; j < cnt;j++){
-          if(cnt > tote){
+        tcnt = cnt === -1?actv.length-1:cnt;
+        tote = actv.length-tcnt;
+        for(var j = 0; j < tote;j++){
+          if(tote < 0){
             break;
           }
           low = pool[actv[0]].value;

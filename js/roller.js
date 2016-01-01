@@ -110,7 +110,6 @@ var Roller = (function(){
         lib.clearResult();
       }
       else if(e.keyCode === 112){
-        console.log(e.keyCode);
         lib.toggleHelp();
       }
     });
