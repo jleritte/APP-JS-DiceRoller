@@ -17,20 +17,21 @@ Roller = (function(me){
   lib.parseText = function(roll){
     var dice = {};
     roll = lib.matchParenthese(roll);
+    console.log(roll);
     roll.forEach(function(e,i,a){
-      e = e.split(/([+])/);
-      if(e[0] === ''){
-        e.shift();
-      }
+      e = e.split(/[+]/);
       a[i] = e;
     });
     console.log(roll);
-    roll = [].concat.apply([],roll);
-    // roll = roll.filter(function(e){
-    //   return e !== '+';
-    // });
-    // roll = roll.split(/([+v^r!act])/);
-    console.log(roll);
+    if(roll.length >1){
+      roll = lib.distributeAdders(roll);
+    } else {
+      roll = [].concat.apply([],roll);
+    }
+    roll.forEach(function(e,i,a){
+      a[i] = e.split(/([+v^r!act])/);
+    });
+console.log(roll);
     // if(roll.length === 1){
     //   temp = this.getDice(roll[0]);
     //   dice[roll[0]] = this.rollDice(roll[0],temp);
@@ -63,6 +64,24 @@ Roller = (function(me){
     if(string){
       pools.push(string);
     }
+    return pools;
+  };
+  lib.distributeAdders = function(pools){
+    pools.reverse();
+    pools.forEach(function(e,i,a){
+      e.forEach(function(f,j,b){
+        if(!f.match(/d/)){
+          a[i+1].forEach(function(str,k,c){
+            c[k] = str + f;
+          });
+          b[j] = '';
+        }
+      });
+    });
+    pools = [].concat.apply([],pools);
+    pools = pools.filter(function(e){
+      return e !== '';
+    });
     return pools;
   };
   lib.getDice = function(note){
