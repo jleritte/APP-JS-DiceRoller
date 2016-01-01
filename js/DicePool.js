@@ -105,10 +105,10 @@ function _processAdders(dice){
         lib.explodeRoll(dice,dice[mod]);
       }
       if(mod === 'v'){
-        lib.dropLowest(dice,dice[mod]);
+        lib.keepLowest(dice,dice[mod]);
       }
       if(mod === '^'){
-        lib.keepLowest(dice,dice[mod]);
+        lib.keepHighest(dice,dice[mod]);
       }
       if(mod === 't'){
         lib.countSuccess(dice,dice[mod]);
@@ -171,7 +171,7 @@ function _explodeRoll(dice,limit){
     }
   }
 }
-function _dropLowest(dice,cnt){
+function _keepHighest(dice,cnt){
   var i;
   cnt =  isNaN(parseInt(cnt))?1:parseInt(cnt);
   for(var key in dice){
@@ -291,6 +291,35 @@ function _getTotal(dice,plus){
     }
   }
   dice.Total = total;
+}
+function _formatResult(dice){
+  var result = '';
+  for(var die in dice){
+    result += '<b>'+die+':</b> ';
+    die = dice[die];
+    if(Array.isArray(die)){
+      for(i=0;i<die.length;i++){
+        if(isNaN(die[i].value)){
+          var num = die[i].value;
+          num = num.substr(num.length-1);
+          result += '<span class="disabled">'+num+'</span> ';
+        }
+        else{
+          if(die[i].value === die[i].sides){
+            result += '<span class="max">'+die[i].value+'</span> ';
+          }
+          else{
+            result += '<span>'+die[i].value+'</span> ';
+          }
+        }
+      }
+    }
+    else{
+      result += die;
+    }
+    result += '</br>';
+  }
+  return result;
 }
 
 module.exports = DicePool;

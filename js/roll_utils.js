@@ -13,6 +13,7 @@ Roller = (function(me){
     error = _private.error;
     saved = _private.saved;
     lib = _private.lib;
+/*Moving to Dicepool*/
   lib.parseText = function(roll){
     var dice = {};
     roll = roll.split(/([+v^r!act])/);
@@ -297,6 +298,8 @@ Roller = (function(me){
     }
     dice.Total = total;
   };
+/*end of dicepool moves*/
+/*Became its own object*/
   lib.die = function(sides){
     this.sides = sides;
     this.value = 0;

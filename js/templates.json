@@ -1,3 +1,4 @@
+//HTML Templates in string format
 {
   "game": ["<div id=\"contain\">",
       "<div id=\"roller\">",
