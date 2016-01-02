@@ -15,14 +15,13 @@ Roller = (function(me){
     lib = _private.lib;
 /*Moving to Dicepool*/
   lib.parseText = function(roll){
-    var dice = {};
     roll = lib.matchParenthese(roll);
-    console.log(roll);
+console.log(roll);
     roll.forEach(function(e,i,a){
       e = e.split(/[+]/);
       a[i] = e;
     });
-    console.log(roll);
+console.log(roll);
     if(roll.length >1){
       roll = lib.distributeAdders(roll);
     } else {
@@ -31,26 +30,33 @@ Roller = (function(me){
     roll.forEach(function(e,i,a){
       a[i] = e.split(/([+v^r!act])/);
     });
+    roll.forEach(function(e,i){
+      var dice = {},j;
+      if(e.length === 1){
+        temp = lib.getDice(e[0]);
+        dice[e[0]] = lib.rollDice(e[0],temp);
+      }
+      else{
+        for(j = 0;j < e.length;j+=2){
+          temp = lib.getDice(e[j]);
+          if(Array.isArray(temp)){
+            dice[e[j]] = lib.rollDice(e[j],temp);
+          }
+          else{
+            if(e[j-1] in dice){
+              temp = lib.processDups(e[j-1],dice[e[j-1]],temp);
+            }
+            dice[e[j-1]] = temp;
+          }
+        }
+      }
+      if(!dice.hasOwnProperty('+')){
+        dice['+'] = 0;
+      }
+      roll[i] = dice;
+    });
 console.log(roll);
-    // if(roll.length === 1){
-    //   temp = this.getDice(roll[0]);
-    //   dice[roll[0]] = this.rollDice(roll[0],temp);
-    // }
-    // else{
-    //   for(var i = 0;i < roll.length;i+=2){
-    //     temp = this.getDice(roll[i]);
-    //     if(Array.isArray(temp)){
-    //       dice[roll[i]] = this.rollDice(roll[i],temp);
-    //     }
-    //     else{
-    //       dice[roll[i-1]] = temp;
-    //     }
-    //   }
-    // }
-    // if(!dice.hasOwnProperty('+')){
-    //   dice['+'] = 0;
-    // }
-    return dice;
+    return roll;
   };
   lib.matchParenthese = function(string){
     var pat = /(.*)\((.*?)\)(.*)/,
@@ -82,7 +88,16 @@ console.log(roll);
     pools = pools.filter(function(e){
       return e !== '';
     });
+    pools.reverse();
     return pools;
+  };
+  lib.processDups = function(key,value,temp){
+    var rtrn = value;
+console.log(value<temp);
+    if(value !== temp&&!isNaN(temp)&&!isNaN(value)){
+console.log(key,value,temp);
+    }
+    return rtrn;
   };
   lib.getDice = function(note){
     var num,sides,dice =[];
@@ -101,7 +116,7 @@ console.log(roll);
       sides = 6;
     }
     else{
-      return note;
+      return parseInt(note);
     }
     while(dice.length < num){
       dice.push(new this.die(sides));
@@ -147,7 +162,6 @@ console.log(roll);
   };
   lib.processAdders = function(dice){
     var keys = Object.keys(dice);
-
     keys.forEach(function(mod,i){
       if(mod.length === 1) {
         if(mod === 'r'){
@@ -183,7 +197,7 @@ console.log(roll);
     });
   };
   lib.reRollDice = function(dice,limit){
-    limit = isNaN(parseInt(limit))?1:parseInt(limit);
+    limit = isNaN(limit)?1:limit;
     for(var key in dice){
       var pool = dice[key];
       if(Array.isArray(pool)){
@@ -208,14 +222,14 @@ console.log(roll);
     }
   };
   lib.explodeRoll = function(dice,limit){
-    limit = isNaN(parseInt(limit))?-1:parseInt(limit);
+    limit = isNaN(limit)?-1:limit;
     var expld = 0;
     for(var key in dice){
       var pool = dice[key];
       if(Array.isArray(pool)){
         var cnt = 0,
           size = pool[0].sides,
-          bns = limit === -1?size:limit;
+          bns = limit === -1?size-1:limit;
         while(true){
           if(cnt >= pool.length){
             break;
@@ -235,7 +249,7 @@ console.log(roll);
   };
   lib.keepHighest = function(dice,cnt){
     var i;
-    cnt =  isNaN(parseInt(cnt))?1:parseInt(cnt);
+    cnt =  isNaN(cnt)?1:cnt;
     for(var key in dice){
       var pool = dice[key];
       if(Array.isArray(pool)){
@@ -269,7 +283,7 @@ console.log(roll);
   };
   lib.keepLowest = function(dice,cnt){
     var i;
-    cnt =  isNaN(parseInt(cnt))?-1:parseInt(cnt);
+    cnt =  isNaN(cnt)?-1:cnt;
     for(var key in dice){
       var pool = dice[key];
       if(Array.isArray(pool)){
@@ -306,7 +320,7 @@ console.log(roll);
     var success = 0,
       botch = dice.hasOwnProperty('c')?true:false,
       bonus = dice.hasOwnProperty('a')?true:false;
-    trgt = isNaN(parseInt(trgt))?-1:parseInt(trgt);
+    trgt = isNaN(trgt)?-1:trgt;
     for(var key in dice){
       var pool = dice[key];
       if(Array.isArray(pool)){

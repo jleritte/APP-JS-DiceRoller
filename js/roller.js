@@ -73,7 +73,7 @@ var Roller = (function(){
   "help": ["<div id=\"helpBlur\">",
       "<pre id='helpContain'>",
 "Drop Dice - v Number - Drops the lowest \"number\" of dice in a roll.",
-"Keep Dice - ^ Number - Keeps the lowest \"numbers\" of dice in a roll.",
+"Keep Dice - ^ Number - Keeps the lowest \"number\" of dice in a roll.",
 "Reroll Dice - r Number - Rerolls any dice that come up equal to or lower than \"number.\"",
 "Exploding - ! - Adds an extra dice every time a die comes up as the maximum.",
 "Success-Counting - t Number - Counts as successes the number of dice that land equal to or higher than \"number.\"",
