@@ -56,32 +56,32 @@ var Roller = (function(){
   };
   lib.loadTemplate = function(where){
     var templates = {
-  "game": ["<div id=\"contain\">",
-      "<div id=\"roller\">",
-        "<div>Type Roll below - Press F1 for Help</div>",
-        "<input id=\"roll\" type=\"text\"></input>",
-        "<button id=\"save\">Save</button>",
-        "<div id=\"result\"></div>",
-      "</div>",
-      "<div id=\"list\">",
-        "<div id=\"listCont\">",
-          "<ul class=\"saved\"></ul>",
-        "</div>",
-      "</div>",
-    "</div>"],
-  "save": ["<li><span id=\"delete\">x</span></li>"],
-  "help": ["<div id=\"helpBlur\">",
-      "<pre id='helpContain'>",
-"Drop Dice - v Number - Drops the lowest \"number\" of dice in a roll.",
-"Keep Dice - ^ Number - Keeps the lowest \"number\" of dice in a roll.",
-"Reroll Dice - r Number - Rerolls any dice that come up equal to or lower than \"number.\"",
-"Exploding - ! - Adds an extra dice every time a die comes up as the maximum.",
-"Success-Counting - t Number - Counts as successes the number of dice that land equal to or higher than \"number.\"",
-"  Success-Canceling - c - Cancels out a success every time a die lands on \"1\" (the minimum).",
-"  Bonus Successes - a - Adds a success every time a die lands on the maximum for that dice type.",
-"Fate/Fudge dice - F - Rolls dice for the Fate system (-1, 0 or +1)</pre>",
-    "</div>"]
-},//require('./templates'),
+      "game": ["<div id=\"contain\">",
+          "<div id=\"roller\">",
+            "<div>Type Roll below - Press F1 for Help</div>",
+            "<input id=\"roll\" type=\"text\"></input>",
+            "<button id=\"save\">Save</button>",
+            "<div id=\"result\"></div>",
+          "</div>",
+          "<div id=\"list\">",
+            "<div id=\"listCont\">",
+              "<ul class=\"saved\"></ul>",
+            "</div>",
+          "</div>",
+        "</div>"],
+      "save": ["<li><span id=\"delete\">x</span></li>"],
+      "help": ["<div id=\"helpBlur\">",
+          "<pre id='helpContain'>",
+    "Drop Dice - v Number - Drops the lowest \"number\" of dice in a roll.",
+    "Keep Dice - ^ Number - Keeps the lowest \"number\" of dice in a roll.",
+    "Reroll Dice - r Number - Rerolls any dice that come up equal to or lower than \"number.\"",
+    "Exploding - ! - Adds an extra dice every time a die comes up as the maximum.",
+    "Success-Counting - t Number - Counts as successes the number of dice that land equal to or higher than \"number.\"",
+    "  Success-Canceling - c - Cancels out a success every time a die lands on \"1\" (the minimum).",
+    "  Bonus Successes - a - Adds a success every time a die lands on the maximum for that dice type.",
+    "Fate/Fudge dice - F - Rolls dice for the Fate system (-1, 0 or +1)</pre>",
+        "</div>"]
+    },//require('./templates'),
         keys = Object.keys(templates);
 
     keys.forEach(function(elem){
@@ -102,17 +102,28 @@ var Roller = (function(){
     lib.fillSaved();
   };
   lib.connectKey = function(){
-    document.addEventListener('keypress',function(e){
-      if(e.keyCode === 13){
+    document.addEventListener('keyup',function(e){
+      if(e.key === "Enter"){
         lib.getResult();
       }
-      else if(e.keyCode === 27){
+      else if(e.key === "Escape"){
         lib.clearResult();
       }
-      else if(e.keyCode === 112){
+      else if(e.key === "F1"){
         lib.toggleHelp();
       }
     });
+    document.querySelector('#roll').addEventListener('keyup',function(e){
+      if(e.key === "("){
+        lib.autoParen(e.target);
+      }
+    });
+  };
+  lib.autoParen = function(input){
+    var start = input.selectionStart,
+        end = input.selectionEnd;
+    input.value += ')';
+    input.setSelectionRange(start,end);
   };
   lib.connectButton = function(butt){
     butt.addEventListener('click', lib.saveRoll);
@@ -160,7 +171,6 @@ var Roller = (function(){
     var entry = document.getElementsByTagName('title')[0];
     entry.parentNode.insertBefore(icon, entry);
   };
-
 
   return me;
 })();

@@ -30,25 +30,29 @@ console.log(roll);
     roll.forEach(function(e,i,a){
       a[i] = e.split(/([+v^r!act])/);
     });
+console.log(roll);
     roll.forEach(function(e,i){
-      var dice = {},j;
+      var dice = {};
       if(e.length === 1){
         temp = lib.getDice(e[0]);
         dice[e[0]] = lib.rollDice(e[0],temp);
       }
       else{
-        for(j = 0;j < e.length;j+=2){
+        e.forEach(function(f,j,e){
+          if(j % 2 === 1){
+            return;
+          }
           temp = lib.getDice(e[j]);
           if(Array.isArray(temp)){
             dice[e[j]] = lib.rollDice(e[j],temp);
           }
           else{
             if(e[j-1] in dice){
-              temp = lib.processDups(e[j-1],dice[e[j-1]],temp);
+              temp = lib.processDups(e[j-1],dice[e[j-1]],temp,dice[e[0]][0].sides);
             }
             dice[e[j-1]] = temp;
           }
-        }
+        });
       }
       if(!dice.hasOwnProperty('+')){
         dice['+'] = 0;
@@ -91,11 +95,11 @@ console.log(roll);
     pools.reverse();
     return pools;
   };
-  lib.processDups = function(key,value,temp){
-    var rtrn = value;
-console.log(value<temp);
+  lib.processDups = function(key,value,temp,size){
+    var rtrn = value || temp;
+console.log(rtrn);
     if(value !== temp&&!isNaN(temp)&&!isNaN(value)){
-console.log(key,value,temp);
+console.log(key,value,temp,size);
     }
     return rtrn;
   };
