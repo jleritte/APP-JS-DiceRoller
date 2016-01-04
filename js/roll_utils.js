@@ -65,7 +65,7 @@ console.log(roll);
   lib.matchParenthese = function(string){
     var pat = /(.*)\((.*?)\)(.*)/,
         pools = [];
-    while(string.match(/\(/)){
+    while(string.match(pat)){
       string = string.match(pat);
       string.shift();
       pools.push(string.splice(1,1).join(''));
