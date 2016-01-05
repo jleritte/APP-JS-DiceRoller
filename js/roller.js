@@ -157,7 +157,7 @@ var Roller = (function(){
       var help = document.importNode(document.querySelector('template.help').content,true);
       document.querySelector('.contain').insertBefore(help,document.querySelector('.roller'));
       help = document.querySelector('.contain').firstElementChild;
-      help.className = 'help';
+      help.className = 'helpBlur help';
     }
     else{
       document.querySelector('.contain').removeChild(document.querySelector('.contain').firstElementChild);
