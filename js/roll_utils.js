@@ -99,7 +99,15 @@ console.log(roll);
     var rtrn = value || temp;
 console.log(rtrn);
     if(value !== temp&&!isNaN(temp)&&!isNaN(value)){
-console.log(key,value,temp,size);
+console.log(key,value,temp,'d'+size);
+      switch(key){
+        case 'r': console.log('Reroll'); break;
+        case '!': console.log('Bang'); break;
+        case 'v': console.log('Drop Lowest'); break;
+        case '^': console.log('Drop Highest'); break;
+        case 't': console.log('Target'); break;
+        case '+': console.log('Plus'); break;
+      }
     }
     return rtrn;
   };
