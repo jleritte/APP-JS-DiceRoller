@@ -18,19 +18,19 @@ Roller = (function(me){
     if(result !== error){
       dice = this.parseText(result);
       this.processAdders(dice);
-      window.result.innerHTML = this.formatResult(dice);
+      document.querySelector('.result').innerHTML = this.formatResult(dice);
       var clear = document.createElement('button');
       clear.textContent = 'Clear';
       clear.addEventListener('click',lib.clearResult);
-      window.result.appendChild(clear);
+      document.querySelector('.result').appendChild(clear);
     }
     else{
-      window.result.innerHTML = result;
+      document.querySelector('.result').innerHTML = result;
     }
   };
   lib.clearResult = function(){
-    document.querySelector('#roll').value = '';
-    window.result.innerHTML = '';
+    document.querySelector('.roll').value = '';
+    document.querySelector('.result').innerHTML = '';
   };
   lib.saveRoll = function(){
     var mtch = false,where, save = lib.grabText();
@@ -112,7 +112,7 @@ Roller = (function(me){
     return result;
   };
   lib.grabText = function(){
-    var roll = document.querySelector('#roll').value;
+    var roll = document.querySelector('.roll').value;
     var splt = roll.split('d');
     if(splt.length > 1){
       return roll;

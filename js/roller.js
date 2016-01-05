@@ -56,22 +56,22 @@ var Roller = (function(){
   };
   lib.loadTemplate = function(where){
     var templates = {
-      "game": ["<div id=\"contain\">",
-          "<div id=\"roller\">",
+      "game": ["<div class=\"contain\">",
+          "<div class=\"roller\">",
             "<div>Type Roll below - Press F1 for Help</div>",
-            "<input id=\"roll\" type=\"text\"></input>",
-            "<button id=\"save\">Save</button>",
-            "<div id=\"result\"></div>",
+            "<input class=\"roll\" type=\"text\"></input>",
+            "<button class=\"save\">Save</button>",
+            "<div class=\"result\"></div>",
           "</div>",
-          "<div id=\"list\">",
-            "<div id=\"listCont\">",
+          "<div class=\"list\">",
+            "<div class=\"listCont\">",
               "<ul class=\"saved\"></ul>",
             "</div>",
           "</div>",
         "</div>"],
-      "save": ["<li><span id=\"delete\">x</span></li>"],
-      "help": ["<div id=\"helpBlur\">",
-          "<pre id='helpContain'>",
+      "save": ["<li><span class=\"delete\">x</span></li>"],
+      "help": ["<div class=\"helpBlur\">",
+          "<pre class='helpContain'>",
     "Drop Dice - v Number - Drops the lowest \"number\" of dice in a roll.",
     "Keep Dice - ^ Number - Keeps the lowest \"number\" of dice in a roll.",
     "Reroll Dice - r Number - Rerolls any dice that come up equal to or lower than \"number.\"",
@@ -98,7 +98,7 @@ var Roller = (function(){
     document.querySelector('input').addEventListener('focus',function(e){
       e.target.select();
     }); 
-    lib.connectButton(document.querySelector('#save'));
+    lib.connectButton(document.querySelector('.save'));
     lib.fillSaved();
   };
   lib.connectKey = function(){
@@ -113,7 +113,7 @@ var Roller = (function(){
         lib.toggleHelp();
       }
     });
-    document.querySelector('#roll').addEventListener('keyup',function(e){
+    document.querySelector('.roll').addEventListener('keyup',function(e){
       if(e.key === "("){
         lib.autoParen(e.target);
       }
@@ -149,18 +149,18 @@ var Roller = (function(){
   lib.fillInput = function(roll){
     var str = roll.textContent;
     str = str.substring(1,str.length);
-    document.querySelector('#roll').value = saved[str];
+    document.querySelector('.roll').value = saved[str];
     this.getResult();
   };
   lib.toggleHelp = function(){
     if(document.querySelectorAll('.help').length === 1){
       var help = document.importNode(document.querySelector('template.help').content,true);
-      window.contain.insertBefore(help,window.roller);
-      help = window.contain.firstElementChild;
+      document.querySelector('.contain').insertBefore(help,document.querySelector('.roller'));
+      help = document.querySelector('.contain').firstElementChild;
       help.className = 'help';
     }
     else{
-      window.contain.removeChild(window.contain.firstElementChild);
+      document.querySelector('.contain').removeChild(document.querySelector('.contain').firstElementChild);
     }
   };
   lib.loadFavicon = function(){
