@@ -89,6 +89,7 @@ console.log(roll);
         }
         return keep;
     });
+//TODO finish this https://en.wikipedia.org/wiki/Reverse_Polish_notation https://en.wikipedia.org/wiki/Shunting-yard_algorithm
     text.forEach(function(e){
         if(e.match(/[+v^r!act\(\)]/)){
             ops.push(e);
