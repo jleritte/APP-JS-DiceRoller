@@ -73,80 +73,102 @@ console.log(roll);
     var val = [],ops = [];
     text = text.split(/([+v^r!act\(\)])/);
     text = text.filter(function(e,i,a){
-        var keep = true;
-        if(i === 0&&e === ''){
-            return false;
+      var keep = true;
+      if(i === 0&&e === ''){
+        return false;
+      }
+      if(e === ''){
+        if(a[i-1] === ')'){
+          keep = false;
+        } else if(a[i+1] === "("){
+          keep = false;
+          if(a[i-1].match(/[v^r!tca]/)){
+            keep = true;
+          }
         }
-        if(e === ''){
-            if(a[i-1] === ')'){
-                keep = false;
-            } else if(a[i+1] === "("){
-                keep = false;
-                if(a[i-1].match(/[v^r!tca]/)){
-                    keep = true;
-                }
-            }
-        }
-        return keep;
+      }
+      return keep;
     });
 //TODO finish this https://en.wikipedia.org/wiki/Reverse_Polish_notation https://en.wikipedia.org/wiki/Shunting-yard_algorithm
     text.forEach(function(e){
-        if(e.match(/[+v^r!act\(\)]/)){
-            ops.push(e);
-        } else {
-            val.push(e);
+      var precedence = {'r':5,'!':4,'v':3,'^':3,'t':2,'a':2,'c':2,'+':1};
+      if(e.match(/[+v^r!act\(\)]/)){
+        var cur = precedence[e],
+            last = precedence[ops[0]];
+        if(e === ')'){
+          var esc = true;
+          while(esc){
+            if(ops[0] !== '('){
+              val.push(ops.shift());
+              if(ops[0] === '('){
+                ops.shift();
+                esc = false;
+              }
+            }
+          }
+        } else if(cur < last&& e !== '('){
+          val.push(ops.shift());
+          ops.unshift(e);
+        } else{
+          ops.unshift(e);
         }
+      } else {
+        val.push(e);
+      }
     });
+    while(ops.length){
+      val.push(ops.shift());
+    }
     console.log(val,ops);
-    return text;
+    return val.join(',');
   };
-//   lib.matchParenthese = function(string){
-//     var pat = /(.*)\((.*?)\)(.*)/,
-//         pools = [];
-//     while(string.match(pat)){
-//       string = string.match(pat);
-//       string.shift();
-//       pools.push(string.splice(1,1).join(''));
-//       string = string.join('');
-//     }
-//     if(string){
-//       pools.push(string);
-//     }
-//     return pools;
-//   };
-//   lib.distributeAdders = function(pools){
-//     pools.reverse();
-//     pools.forEach(function(e,i,a){
-//       e.forEach(function(f,j,b){
-//         if(!f.match(/d/)&&!f.match(/^\d/)){
-//           a[i+1].forEach(function(str,k,c){
-//             c[k] = str + f;
-//           });
-//           b[j] = '';
-//         }
-//       });
-//     });
-//     pools = [].concat.apply([],pools);
-//     pools = pools.filter(function(e){
-//       return e !== '';
-//     });
-//     pools.reverse();
-//     return pools;
-//   };
-//   lib.processDups = function(key,value,temp,size){
-//     var rtrn = value || temp;
-//     if(value !== temp&&!isNaN(temp)&&!isNaN(value)){
-// console.log(key,value,temp,'d'+size);
-//       switch(key){
-//         case 'r': console.log('Reroll'); break;
-//         case '!': console.log('Bang'); break;
-//         case 'v': console.log('Drop Lowest'); break;
-//         case '^': console.log('Drop Highest'); break;
-//         case 't': console.log('Target'); break;
-//       }
-//     }
-//     return rtrn;
-//   };
+/*  lib.matchParenthese = function(string){
+    var pat = /(.*)\((.*?)\)(.*)/,
+        pools = [];
+    while(string.match(pat)){
+      string = string.match(pat);
+      string.shift();
+      pools.push(string.splice(1,1).join(''));
+      string = string.join('');
+    }
+    if(string){
+      pools.push(string);
+    }
+    return pools;
+  };
+  lib.distributeAdders = function(pools){
+    pools.reverse();
+    pools.forEach(function(e,i,a){
+      e.forEach(function(f,j,b){
+        if(!f.match(/d/)&&!f.match(/^\d/)){
+          a[i+1].forEach(function(str,k,c){
+            c[k] = str + f;
+          });
+          b[j] = '';
+        }
+      });
+    });
+    pools = [].concat.apply([],pools);
+    pools = pools.filter(function(e){
+      return e !== '';
+    });
+    pools.reverse();
+    return pools;
+  };
+  lib.processDups = function(key,value,temp,size){
+    var rtrn = value || temp;
+    if(value !== temp&&!isNaN(temp)&&!isNaN(value)){
+console.log(key,value,temp,'d'+size);
+      switch(key){
+        case 'r': console.log('Reroll'); break;
+        case '!': console.log('Bang'); break;
+        case 'v': console.log('Drop Lowest'); break;
+        case '^': console.log('Drop Highest'); break;
+        case 't': console.log('Target'); break;
+      }
+    }
+    return rtrn;
+  };*/
   lib.getDice = function(note){
     var num,sides,dice =[];
     if(/\d*d\d+/.test(note)){
