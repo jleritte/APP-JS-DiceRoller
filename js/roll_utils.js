@@ -15,67 +15,18 @@ Roller = (function(me){
     lib = _private.lib;
 /*Moving to Dicepool*/
   lib.parseText = function(roll){
-console.log(roll);
     roll = {'text': roll};
-console.log(roll);
     roll.postfix = lib.toPostFix(roll.text);
-console.log(roll);
-    roll.total = lib.processDice(roll.postfix.split(','));
-/*    roll = lib.matchParenthese(roll);
-    roll.forEach(function(e,i,a){
-      e = e.split(/[+]/);
-      a[i] = e;
-    });
-    if(roll.length >1){
-      roll = lib.distributeAdders(roll);
-    } else {
-      roll = [].concat.apply([],roll);
-    }
-  console.log(roll);
-    roll.forEach(function(e,i,a){
-      a[i] = e.split(/([+v^r!act])/);
-    });
-  console.log(roll);
-    roll.forEach(function(e,i){
-      var dice = {};
-      if(!e[0].match(/d/)&&e[0].match(/^\d/)){
-        e = [e[0]];
-      }
-      if(e.length === 1){
-        temp = lib.getDice(e[0]);
-        dice[e[0]] = lib.rollDice(e[0],temp);
-      }
-      else{
-        e.forEach(function(f,j,e){
-          if(j % 2 === 1){
-            return;
-          }
-          temp = lib.getDice(e[j]);
-          if(Array.isArray(temp)){
-            dice[e[j]] = lib.rollDice(e[j],temp);
-          }
-          else{
-            if(e[j-1] in dice){
-              temp = lib.processDups(e[j-1],dice[e[j-1]],temp,dice[e[0]][0].sides);
-            }
-            dice[e[j-1]] = temp;
-          }
-        });
-      }
-      // if(!dice.hasOwnProperty('+')){
-      //   dice['+'] = 0;
-      // }
-      roll[i] = dice;
-    });*/
-console.log(roll);
+    roll = lib.processDice(roll.postfix.split(','));
+    console.log(roll);
     return roll;
   };
   lib.toPostFix = function(text){
     var val = [],ops = [];
-    text = text.split(/([+v^r!act\(\)])/);
+    text = text.split(/([-+v^r!act\(\)])/);
     text = text.filter(function(e,i,a){
       var keep = true;
-      if(i === 0&&e === ''){
+      if(i === 0 && e === ''){
         return false;
       }
       if(e === ''){
@@ -90,8 +41,12 @@ console.log(roll);
       }
       return keep;
     });
-    text.forEach(function(e){
-      var PRECEDENCE = {'r':5,'!':4,'v':3,'^':3,'t':2,'a':2,'c':2,'+':1};
+    text.forEach(function(e,i,a){
+      var PRECEDENCE = {'r':5,'!':4,'v':3,'^':3,'t':2,'+':1,'-':1};
+      if(e.match(/-/) && e.length === 1){
+        a[i+1] = e+a[i+1];
+        e = '+';
+      }
       if(e.match(/[+v^r!act\(\)]/)){
         var cur = PRECEDENCE[e],
             last = PRECEDENCE[ops[0]];
@@ -107,8 +62,7 @@ console.log(roll);
             }
           }
         } else if(e === 'a'||e === 'c'){
-          console.log(ops);
-          ops[0] += e
+          ops[0] += e;
         } else if(cur < last&& e !== '('){
           val.push(ops.shift());
           ops.unshift(e);
@@ -122,63 +76,15 @@ console.log(roll);
     while(ops.length){
       val.push(ops.shift());
     }
-    console.log(val,ops);
     return val.join(',');
   };
-/*  lib.matchParenthese = function(string){
-    var pat = /(.*)\((.*?)\)(.*)/,
-        pools = [];
-    while(string.match(pat)){
-      string = string.match(pat);
-      string.shift();
-      pools.push(string.splice(1,1).join(''));
-      string = string.join('');
-    }
-    if(string){
-      pools.push(string);
-    }
-    return pools;
-  };
-  lib.distributeAdders = function(pools){
-    pools.reverse();
-    pools.forEach(function(e,i,a){
-      e.forEach(function(f,j,b){
-        if(!f.match(/d/)&&!f.match(/^\d/)){
-          a[i+1].forEach(function(str,k,c){
-            c[k] = str + f;
-          });
-          b[j] = '';
-        }
-      });
-    });
-    pools = [].concat.apply([],pools);
-    pools = pools.filter(function(e){
-      return e !== '';
-    });
-    pools.reverse();
-    return pools;
-  };
-  lib.processDups = function(key,value,temp,size){
-    var rtrn = value || temp;
-    if(value !== temp&&!isNaN(temp)&&!isNaN(value)){
-    console.log(key,value,temp,'d'+size);
-      switch(key){
-        case 'r': console.log('Reroll'); break;
-        case '!': console.log('Bang'); break;
-        case 'v': console.log('Drop Lowest'); break;
-        case '^': console.log('Drop Highest'); break;
-        case 't': console.log('Target'); break;
-      }
-    }
-    return rtrn;
-  };*/
   lib.processDice = function(arry){
-    var roll = {}, i = 0, temp = [];
-debugger;
+    var roll = {}, i = 0, temp = [],keys = arry.slice();
     while(arry.length > 0){
       if(arry[0].match(/[v^r!tca+]/)){
-        if(i + 2 === temp.length){
+        if(i + 2 === temp.length||arry[0] === '+'){
           temp.push(lib.processAdders(arry.shift(),temp.pop(),temp.pop()));
+          if(i >= temp.length){ i = temp.length - 1;}
         } else {
           temp[i] = lib.processAdders(arry.shift(),temp.pop(),temp[i]);
         }
@@ -190,6 +96,28 @@ debugger;
         }
       }
     }
+    temp[0].forEach(function(e){
+      if(typeof e === 'object'){
+        var temp = 'd'+e.sides;
+        if(temp in roll){
+          roll[temp].push(e);
+        } else {
+          roll[temp] = [e];
+        }
+      } else if(typeof e === 'number'){
+        if('+' in roll){
+          roll['+'].push(e);
+        } else {
+          roll['+'] = [e];
+        }
+      } else {
+        roll.success = e.replace('s','');
+      }
+    });
+    if(!('success' in roll)){
+      roll.total = lib.getTotal(temp[0]);
+    }
+    console.log(roll,arry,keys);
     return roll;
   };
   lib.getDice = function(note){
@@ -214,6 +142,7 @@ debugger;
     while(dice.length < num){
       dice.push(new this.die(sides));
     }
+    lib.rollDice(note,dice);
     return dice;
   };
   lib.rollDice = function(note,dice){
@@ -258,28 +187,27 @@ debugger;
     switch(op){
       case 'r':  newO = lib.reRoll(o1,o2);break;
       case '!':  newO = lib.explodeRoll(o1,o2);break;
-      case 'v':  newO = lib.keepLowest(o1,o2);break;
-      case '^':  newO = lib.keepHighest(o1,o2);break;
+      case 'v':  newO = lib.dropLowest(o1,o2);break;
+      case '^':  newO = lib.dropHighest(o1,o2);break;
       case 't':
       case 'ta':
       case 'tc':
       case 'tac':
       case 'tca':  newO = lib.countSuccess(op,o1,o2);break;
-      case '+':  newO = lib.getTotal(o1,o2);break;
+      case '+':  newO = lib.addToRoll(o1,o2);break;
     }
     return newO;
   };
   lib.reRoll = function(limit,dice){
-console.log(dice,limit);
     limit = isNaN(limit)?1:limit;
-    var cnt = 0,
-      size = dice[0].sides;
+    var cnt = 0, size;
     while(true){
-      if(limit === size){
-        break;
-      }
       if(cnt >= dice.length){
         break;
+      }
+      size = dice[cnt].sides;
+      if(limit === size){
+        continue;
       }
       if(dice[cnt].value <= limit){
         var tmp = new this.die(size);
@@ -293,16 +221,18 @@ console.log(dice,limit);
   };
   lib.explodeRoll = function(limit,dice){
     limit = isNaN(limit)?-1:limit;
-    var cnt = 0,
-      size = dice[0].sides,
-      bns = limit === -1?size-1:limit;
+    var cnt = 0, size, bns;
     while(true){
       if(cnt >= dice.length){
         break;
       }
+      if(limit === 1){
+        break;
+      }
+      size = dice[cnt].sides;
+      bns = limit === -1?size - 1:limit;
       if(!isNaN(dice[cnt].value)){
         if(dice[cnt].value >= bns){
-          // expld++;
           var tmp = new this.die(size);
           tmp.roll();
           dice.splice(cnt+1,0,tmp);
@@ -312,133 +242,101 @@ console.log(dice,limit);
     }
     return dice;
   };
-  lib.keepHighest = function(cnt,dice){
-    var i;
+  lib.dropLowest = function(cnt,dice){
     cnt =  isNaN(cnt)?-1:cnt;
-    for(var key in dice){
-      var pool = dice[key];
-      if(Array.isArray(pool)){
-        var low, pos, pop, tote, actv = [], tcnt;
-        for(i = 0; i < pool.length;i++){
-          if(!isNaN(pool[i].value)){
-            actv.push(i);
-          }
-        }
-        tcnt = cnt === -1?actv.length-1:cnt;
-        tote = actv.length-tcnt;
-        for(var j = 0; j < tote;j++){
-          if(tote < 0){
-            break;
-          }
-          low = pool[actv[0]].value;
-          pos = actv[0];
-          pop = 0;
-          for(i = 0; i < actv.length;i++){
-            if(pool[actv[i]].value < low){
-              low = pool[actv[i]].value;
-              pos = actv[i];
-              pop = i;
-            }
-          }
-          pool[pos].value = 'dl'+pool[pos].value;
-          actv.splice(pop,1);
+    var i, j, low, pos, pop, tote, actv = [];
+    for(i = 0; i < dice.length;i++){
+      if(!isNaN(dice[i].value)){
+        actv.push(i);
+      }
+    }
+    tote = cnt === -1?1:cnt;
+    for(j = 0; j < tote;j++){
+      if(tote < 0){
+        break;
+      }
+      low = dice[actv[0]].value;
+      pos = actv[0];
+      pop = 0;
+      for(i = 0; i < actv.length;i++){
+        if(dice[actv[i]].value < low){
+          low = dice[actv[i]].value;
+          pos = actv[i];
+          pop = i;
         }
       }
+      dice[pos].value = 'dl'+dice[pos].value;
+      actv.splice(pop,1);
     }
     return dice;
   };
-  lib.keepLowest = function(cnt,dice){
-    var i;
+  lib.dropHighest = function(cnt,dice){
     cnt =  isNaN(cnt)?-1:cnt;
-    for(var key in dice){
-      var pool = dice[key];
-      if(Array.isArray(pool)){
-        var hgh, pos, pop, tote, actv = [],
-          tcnt;
-        for(i = 0; i < pool.length;i++){
-          if(!isNaN(pool[i].value)){
-            actv.push(i);
-          }
-        }
-        tcnt = cnt === -1?actv.length-1:cnt;
-        tote = actv.length-tcnt;
-        for(var j = 0; j < tote;j++){
-          if(tote < 0){
-            break;
-          }
-          hgh = pool[actv[0]].value;
-          pos = actv[0];
-          pop = 0;
-          for(i = 0;i < actv.length;i++){
-            if(pool[actv[i]].value > hgh){
-              hgh = pool[actv[i]].value;
-              pos = actv[i];
-              pop = i;
-            }
-          }
-          pool[pos].value ='dh'+pool[pos].value;
-          actv.splice(pop,1);
+    var i, j, hgh, pos, pop, tote, actv = [];
+    for(i = 0; i < dice.length;i++){
+      if(!isNaN(dice[i].value)){
+        actv.push(i);
+      }
+    }
+    tote = cnt === -1?1:cnt;
+    for(j = 0; j < tote;j++){
+      if(tote < 0){
+        break;
+      }
+      hgh = dice[actv[0]].value;
+      pos = actv[0];
+      pop = 0;
+      for(i = 0;i < actv.length;i++){
+        if(dice[actv[i]].value > hgh){
+          hgh = dice[actv[i]].value;
+          pos = actv[i];
+          pop = i;
         }
       }
+      dice[pos].value ='dh'+dice[pos].value;
+      actv.splice(pop,1);
     }
     return dice;
   };
   lib.countSuccess = function(op,trgt,dice){
-console.log(op,trgt,dice);
     var success = 0,
       botch = op.match(/c/)?true:false,
       bonus = op.match(/a/)?true:false;
-    trgt = isNaN(trgt)?-1:trgt;
-    for(var key in dice){
-      var pool = dice[key];
-      if(Array.isArray(pool)){
-        if(trgt === -1){
-          trgt = pool[0].sides;
+    for(var i = 0; i < dice.length; i++){
+      var t = isNaN(trgt)?-1:trgt;
+      if(t === -1){
+        t = dice[i].sides;
+      }
+      if(dice[i].value >= t){
+        success++;
+        if(dice[i].value === dice[i].sides && bonus){
+          success++;
         }
-        for(var i = 0; i < pool.length; i++){
-          if(pool[i].value >= trgt){
-            success++;
-            if(pool[i].value === pool[i].sides && bonus){
-              success++;
-            }
-          }
-          if(pool[i].value === 1 && botch){
-            success--;
-          }
-        }
-        success = success < 0?0:success;
+      }
+      if(dice[i].value === 1 && botch){
+        success--;
       }
     }
-    Object.keys(dice).forEach(function(mod){
-      if(mod.length === 1) {
-        delete dice[mod];
-      }
-    });
-    dice.Success = success;
+    success = success < 0?'b'+success:success;
+    dice.push('s'+success);
+    return dice;
   };
   lib.addToRoll = function(adder,roll){
-    return [roll,adder];
+    return [].concat.apply([],[roll,adder]);
   };
-  lib.getTotal = function(dice,plus){
-    var total = parseInt(plus,10);
-    for(var key in dice){
-      if(/\d*d%/.test(key)){
-        total = dice[key];
-        delete dice[key];
-      }
-      else if(key.length > 1 * key.length < 6){
-        if(Array.isArray(dice[key])){
-          var tmp = dice[key];
-          for(var i = 0;i < tmp.length;i++){
-            total += isNaN(tmp[i].value)?0:tmp[i].value;
-          }
+  lib.getTotal = function(dice){
+    var total = 0;
+    dice.forEach(function(e,i,a){
+      if(typeof e === 'object'){
+        if(typeof e.value === 'number'){
+          total += e.value;
         }
-        else{
-          total += key === '+'?parseInt(dice[key]):0;
-        }
+      } else {
+        total += e;
+        a[i] = {'value': e};
       }
-    }
-    dice.Total = total;
+    });
+    return total;
   };
 /*end of dicepool moves*/
 /*Became its own object*/
