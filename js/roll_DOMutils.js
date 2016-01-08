@@ -17,7 +17,7 @@ Roller = (function(me){
     var result = this.grabText();
     if(result !== error){
       dice = this.parseText(result);
-      this.processAdders(dice);
+      // this.processAdders(dice);
       document.querySelector('.result').innerHTML = this.formatResult(dice);
       var clear = document.createElement('button');
       clear.textContent = 'Clear';
