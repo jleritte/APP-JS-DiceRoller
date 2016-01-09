@@ -1,5 +1,5 @@
 var DicePool = require('./DicePool.js');
-var utils = require('./Util_Functions.js');
+var utils = require('./Utils.js');
 
 // Working on turning into modules and will Reactify it ultimately
 function Roller(){
@@ -69,6 +69,7 @@ function Roller(){
   }
   function connectKey(){
     document.addEventListener('keyup',function(e){
+      console.log(e);
       if(e.key === "Enter"){
         utils.getResult();
       }

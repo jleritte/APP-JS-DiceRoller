@@ -15,7 +15,7 @@ module.exports = function(grunt) {
       }
     },
     browserify: {
-      'resources/app.js': ['js/roller.js']
+      'resources/app.js': ['js/Roller.js']
     },
     uglify: {
       build: {

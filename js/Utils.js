@@ -143,7 +143,7 @@ function _grabText(){
   if(splt.length > 1){
     return roll;
   }
-  return error;
+  return this.error;
 }
 function _fillInput(roll){
   var str = roll.textContent;

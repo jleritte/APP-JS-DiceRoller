@@ -185,20 +185,19 @@ function _rollDice(note,dice){
       temp = new Die('F');
       var tmp = dice[i].getValue();
       if(tmp === 2||tmp === 3){
-        dice[i].setValue(-1);
+        temp.setValue(-1);
       }
       else if(tmp === 4||tmp === 6){
-        dice[i].setValue(0);
+        temp.setValue(0);
       }
       else if(tmp === 1||tmp === 5){
-        dice[i].setValue(1);
+        temp.setValue(1);
       }
+      dice[i] = temp;
       total += dice[i].getValue();
     }
-    console.log(dice);
     dice = total;
   }
-  console.log(dice);
   return dice;
 }
 //Switch to handle how to process Roll notations
@@ -223,6 +222,10 @@ function _reRoll(limit,dice){
   limit = isNaN(limit)?1:limit;
   var cnt = 0, size;
   while(true){
+    if(typeof dice[cnt] !== 'object' && dice[cnt] !== undefined){
+      cnt++;
+      continue;
+    }
     if(cnt >= dice.length){
       break;
     }
@@ -245,6 +248,10 @@ function _explodeRoll(limit,dice){
   limit = isNaN(limit)?-1:limit;
   var cnt = 0, size, bns;
   while(true){
+    if(typeof dice[cnt] !== 'object' && dice[cnt] !== undefined){
+      cnt++;
+      continue;
+    }
     if(cnt >= dice.length){
       break;
     }
@@ -268,11 +275,11 @@ function _explodeRoll(limit,dice){
 function _dropLowest(cnt,dice){
   cnt =  isNaN(cnt)?-1:cnt;
   var i, j, low, pos, pop, tote, actv = [];
-  for(i = 0; i < dice.length;i++){
-    if(!isNaN(dice[i].getValue())){
+  dice.forEach(function(e,i){
+    if(!isNaN(e.getValue())){
       actv.push(i);
     }
-  }
+  });
   tote = cnt === -1?1:cnt;
   for(j = 0; j < tote;j++){
     if(tote < 0){
@@ -297,11 +304,11 @@ function _dropLowest(cnt,dice){
 function _dropHighest(cnt,dice){
   cnt =  isNaN(cnt)?-1:cnt;
   var i, j, hgh, pos, pop, tote, actv = [];
-  for(i = 0; i < dice.length;i++){
-    if(!isNaN(dice[i].getValue())){
+  dice.forEach(function(e,i){
+    if(!isNaN(e.getValue())){
       actv.push(i);
     }
-  }
+  });
   tote = cnt === -1?1:cnt;
   for(j = 0; j < tote;j++){
     if(tote < 0){
@@ -327,21 +334,21 @@ function _countSuccess(op,trgt,dice){
   var success = 0,
     botch = op.match(/c/)?true:false,
     bonus = op.match(/a/)?true:false;
-  for(var i = 0; i < dice.length; i++){
+  dice.forEach(function(e){
     var t = isNaN(trgt)?-1:trgt;
     if(t === -1){
-      t = dice[i].getSize();
+      t = e.getSize();
     }
-    if(dice[i].getValue() >= t){
+    if(e.getValue() >= t){
       success++;
-      if(dice[i].getValue() === dice[i].getSize() && bonus){
+      if(e.getValue() === e.getSize() && bonus){
         success++;
       }
     }
-    if(dice[i].getValue() === 1 && botch){
+    if(e.getValue() === 1 && botch){
       success--;
     }
-  }
+  });
   success = success < 0?'b'+success:success;
   dice.push('s'+success);
   return dice;
