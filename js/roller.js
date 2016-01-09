@@ -1,19 +1,34 @@
-// var DicePool = require('./ DicePool.js');
+var DicePool = require('./DicePool.js');
+var utils = require('./Util_Functions.js');
 
 // Working on turning into modules and will Reactify it ultimately
-var Roller = (function(){
-  var error = 'Check Input',
-    saved = localStorage.savedRolls ? JSON.parse(localStorage.savedRolls): {},
-    lib = {},
-    me = {
-      init:function(where){
-        loadStyles('css/roller.css');
-        loadScript('js/roll_utils.js',function(){
-          loadDomUtils(where);
-        });
-      },
-      _private:{error:error,saved:saved,lib:lib}
-    };
+function Roller(){
+  var _private = {
+    'saved': localStorage.savedRolls ? JSON.parse(localStorage.savedRolls): {},
+    'buildGUI': buildGUI,
+    'loadStyles': loadStyles
+  };
+
+  utils = new utils(_private.saved);
+
+  function fillSaved(){
+    var template = document.querySelector('template.save'),
+        list = document.querySelector('ul.saved');
+    for(var roll in _private.saved){
+      var li = document.importNode(template.content,true);
+      list.appendChild(li);
+      li = list.lastElementChild;
+      li.firstElementChild.addEventListener('click',deleteR);
+      li.appendChild(document.createTextNode(roll));
+      li.addEventListener('dblclick',fillI);
+    }
+    function deleteR(e) {
+      utils.deleteRoll(e.target);
+    }
+    function fillI(e) {
+      utils.fillInput(e.target);
+    }
+  }
   function loadStyles(url){
     var link = document.createElement('link');
     link.rel = 'stylesheet';
@@ -22,66 +37,17 @@ var Roller = (function(){
     var entry = document.getElementsByTagName('title')[0];
     entry.parentNode.insertBefore(link, entry);
   }
-  function loadScript(url, callback){
-    var script = document.createElement('script');
-    script.async = true;
-    script.src = url;
-    var entry = document.getElementsByTagName('script')[0];
-    entry.parentNode.insertBefore(script, entry);
-    script.onload = script.onreadystatechange = function()
-    {
-      var rdyState = script.readyState;
-      if (!rdyState || /complete|loaded/.test(script.readyState))
-      {
-        callback();
-        script.onload = null;
-        script.onreadystatechange = null;
-      }
-    };
-  }
-  function loadDomUtils(where) {
-    loadScript('js/roll_DOMutils.js', function(){
-      lib.buildGUI(where);
-    });
-  }
-  lib.buildGUI = function(where){
+  function buildGUI(where){
     where = !where?'body':'.'+where;
     if(where === 'body'){
-      lib.loadFavicon();
+      loadFavicon();
     }
     where = document.querySelector(where);
-    lib.loadTemplate(where);
-    lib.connectKey();
-    me._seal();
-  };
-  lib.loadTemplate = function(where){
-    var templates = {
-      "game": ["<div class=\"contain\">",
-          "<div class=\"roller\">",
-            "<div>Type Roll below - Press F1 for Help</div>",
-            "<input class=\"roll\" type=\"text\"></input>",
-            "<button class=\"save\">Save</button>",
-            "<div class=\"result\"></div>",
-          "</div>",
-          "<div class=\"list\">",
-            "<div class=\"listCont\">",
-              "<ul class=\"saved\"></ul>",
-            "</div>",
-          "</div>",
-        "</div>"],
-      "save": ["<li><span class=\"delete\">x</span></li>"],
-      "help": ["<div class=\"helpBlur\">",
-          "<pre class='helpContain'>",
-    "Drop Lowest Dice - v Number - Drops the lowest \"number\" of dice in a roll.",
-    "Drop Highest Dice - ^ Number - Drops the highest \"number\" of dice in a roll.",
-    "Reroll Dice - r Number - Rerolls any dice that come up equal to or lower than \"number.\"",
-    "Exploding - ! - Adds an extra dice every time a die comes up as the maximum.",
-    "Success-Counting - t Number - Counts as successes the number of dice that land equal to or higher than \"number.\"",
-    "  Success-Canceling - c - Cancels out a success every time a die lands on \"1\" (the minimum).",
-    "  Bonus Successes - a - Adds a success every time a die lands on the maximum for that dice type.",
-    "Fate/Fudge dice - F - Rolls dice for the Fate system (-1, 0 or +1)</pre>",
-        "</div>"]
-    },//require('./templates'),
+    loadTemplate(where);
+    connectKey();
+  }
+  function loadTemplate(where){
+    var templates = require('./templates'),
         keys = Object.keys(templates);
 
     keys.forEach(function(elem){
@@ -98,61 +64,37 @@ var Roller = (function(){
     document.querySelector('input').addEventListener('focus',function(e){
       e.target.select();
     }); 
-    lib.connectButton(document.querySelector('.save'));
-    lib.fillSaved();
-  };
-  lib.connectKey = function(){
+    connectButton(document.querySelector('.save'));
+    fillSaved();
+  }
+  function connectKey(){
     document.addEventListener('keyup',function(e){
       if(e.key === "Enter"){
-        lib.getResult();
+        utils.getResult();
       }
       else if(e.key === "Escape"){
-        lib.clearResult();
+        utils.clearResult();
       }
       else if(e.key === "F1"){
-        lib.toggleHelp();
+        toggleHelp();
       }
     });
     document.querySelector('.roll').addEventListener('keyup',function(e){
       if(e.key === "("){
-        lib.autoParen(e.target);
+        autoParen(e.target);
       }
     });
-  };
-  lib.autoParen = function(input){
+  }
+  function autoParen(input){
     var start = input.selectionStart,
         end = input.selectionEnd;
     input.value += ')';
     input.setSelectionRange(start,end);
-  };
-  lib.connectButton = function(butt){
-    butt.addEventListener('click', lib.saveRoll);
-  };
-  lib.fillSaved = function(){
-    var template = document.querySelector('template.save'),
-        list = document.querySelector('ul.saved');
-    for(var roll in saved){
-      var li = document.importNode(template.content,true);
-      list.appendChild(li);
-      li = list.lastElementChild;
-      li.firstElementChild.addEventListener('click',deleteR);
-      li.appendChild(document.createTextNode(roll));
-      li.addEventListener('dblclick',fillI);
-    }
-    function deleteR(e) {
-      lib.deleteRoll(e.target);
-    }
-    function fillI(e) {
-      lib.fillInput(e.target);
-    }
-  };
-  lib.fillInput = function(roll){
-    var str = roll.textContent;
-    str = str.substring(1,str.length);
-    document.querySelector('.roll').value = saved[str];
-    this.getResult();
-  };
-  lib.toggleHelp = function(){
+  }
+  function connectButton(butt){
+    butt.addEventListener('click', function(){utils.saveRoll();});
+  }
+  function toggleHelp(){
     if(document.querySelectorAll('.help').length === 1){
       var help = document.importNode(document.querySelector('template.help').content,true);
       document.querySelector('.contain').insertBefore(help,document.querySelector('.roller'));
@@ -162,15 +104,27 @@ var Roller = (function(){
     else{
       document.querySelector('.contain').removeChild(document.querySelector('.contain').firstElementChild);
     }
-  };
-  lib.loadFavicon = function(){
+  }
+  function loadFavicon(){
     var icon = document.createElement('link');
     icon.rel = 'icon';
     icon.type = 'image/x-icon';
     icon.href = './img/favicon.ico';
     var entry = document.getElementsByTagName('title')[0];
     entry.parentNode.insertBefore(icon, entry);
-  };
+  }
+//Public functions
+  Object.defineProperties(this,{
+    'init': {
+      value: _init.bind(_private),
+      emunerable: true
+    }
+  });
+}
 
-  return me;
-})();
+window.Roller = Roller;
+
+function _init(where){
+  this.loadStyles('css/roller.css');
+  this.buildGUI(where);
+}
