@@ -1,5 +1,6 @@
 var DicePool = require('./DicePool.js');
 
+//This is a object to hold util functions
 function utils(saved){
   var _private = {
     error: 'Check Input',
@@ -39,6 +40,7 @@ function utils(saved){
   });
 }
 
+//Function to get the Result for 
 function _getResult(){
   var result = _grabText();
   if(result !== this.error){
@@ -59,7 +61,7 @@ function _clearResult(){
   document.querySelector('.result').innerHTML = '';
 }
 function _saveRoll(){
-  var mtch = false,where, save = _grabText();
+  var mtch = false, where, save = _grabText();
   if(save !== this.error){
     var name = prompt("Enter Name For Roll",save);
     if(name === null) {

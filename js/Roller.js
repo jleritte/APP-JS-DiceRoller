@@ -69,7 +69,6 @@ function Roller(){
   }
   function connectKey(){
     document.addEventListener('keyup',function(e){
-      console.log(e);
       if(e.key === "Enter"){
         utils.getResult();
       }
