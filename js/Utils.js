@@ -1,14 +1,26 @@
 var DicePool = require('./DicePool.js');
 
 //This is a object to hold util functions
-function utils(saved){
+function utils(){
   var _private = {
-    error: 'Check Input',
-    saved: saved
+    'error': 'Check Input',
+    'saved': localStorage.savedRolls ? JSON.parse(localStorage.savedRolls): {},
+    'grabText': _grabText
   };
+
+//Function the grabs and validates the text
+  function _grabText(){
+    var roll = document.querySelector('.roll').value;
+    var splt = roll.split('d');
+    if(splt.length > 1){
+      return roll;
+    }
+    return _private.error;
+  }
 
 //Public functions
   Object.defineProperties(this,{
+    private: _private,
     'getResult': {
       value: _getResult.bind(_private),
       emunerable: true
@@ -29,10 +41,6 @@ function utils(saved){
       value: _formatResult.bind(_private),
       emunerable: true
     },
-    'grabtext': {
-      value: _grabText.bind(_private),
-      emunerable: true
-    },
     'fillInput': {
       value: _fillInput.bind(_private),
       emunerable: true
@@ -42,7 +50,8 @@ function utils(saved){
 
 //Function to get the Result from the inputed roll
 function _getResult(){
-  var result = _grabText();
+  console.log(result,this);
+  var result = this.grabText();
   if(result !== this.error){
     dice = new DicePool(result);
     dice = dice.getPool();
@@ -142,15 +151,6 @@ function _formatResult(dice){
     result += '</br>';
   }
   return result;
-}
-//Function the grobs and validates the text
-function _grabText(){
-  var roll = document.querySelector('.roll').value;
-  var splt = roll.split('d');
-  if(splt.length > 1){
-    return roll;
-  }
-  return this.error;
 }
 //Function used to fill the Input from the saved list
 function _fillInput(roll){

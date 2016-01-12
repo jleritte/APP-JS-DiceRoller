@@ -1,5 +1,5 @@
 var DicePool = require('./DicePool.js');
-var utils = require('./Utils.js');
+var Utils = require('./Utils.js');
 
 // Working on turning into modules and will Reactify it ultimately
 function Roller(){
@@ -8,6 +8,7 @@ function Roller(){
     'buildGUI': buildGUI,
     'loadStyles': loadStyles
   };
+  utils = new Utils();
 
 //Function that loads the saved rolls and fills the GUi
   function fillSaved(){
@@ -72,19 +73,25 @@ function Roller(){
   }
 //Adds the event listeners for different key strokes
   function connectKey(){
+    document.addEventListener('keydown',function(e){
+      if(e.which === 112){
+        e.preventDefault();
+      }
+    });
     document.addEventListener('keyup',function(e){
-      if(e.key === "Enter"){
+      console.log(e);
+      if(e.which === 13){
         utils.getResult();
       }
-      else if(e.key === "Escape"){
+      else if(e.which === 27){
         utils.clearResult();
       }
-      else if(e.key === "F1"){
+      else if(e.which === 112){
         toggleHelp();
       }
     });
     document.querySelector('.roll').addEventListener('keyup',function(e){
-      if(e.key === "("){
+      if(e.which === 57){
         autoParen(e.target);
       }
     });
@@ -135,7 +142,7 @@ window.Roller = Roller;
 
 //Initalizer used to start the widget building process
 function _init(where){
-  utils = new utils(this.saved);
+  console.log(utils);
   this.loadStyles('css/roller.css');
   this.buildGUI(where);
 }
