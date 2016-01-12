@@ -50,7 +50,7 @@ function _toPostFix(text){
   });
   text.forEach(function(e,i,a){
     var PRECEDENCE = {'r':5,'!':4,'v':3,'^':3,'t':2,'+':1,'-':1};
-    if(e.match(/-/) && e.length === 1 && a[i+1].match(/d/)){
+    if(e.match(/-/) && e.length === 1){
       a[i+1] = e+a[i+1];
     }
     if(e.match(/[-+v^r!act\(\)]/)&&e.length === 1){
@@ -137,8 +137,8 @@ function _getDice(note){
   var num,sides,dice =[];
   if(/\d*d\d+/.test(note)){
     roll = note.split('d');
-    num = isNaN(parseInt(roll[0],10))?1:parseInt(roll[0],10);
-    sides = parseInt(roll[1],10);
+    num = isNaN(parseInt(roll[0]))?1:Math.abs(roll[0]);
+    sides = parseInt(roll[1]);
   }
   else if(/\d*d%/.test(note)){
     num = 2;
@@ -146,7 +146,7 @@ function _getDice(note){
   }
   else if(/\d*dF/.test(note)){
     roll = note.split('d');
-    num = isNaN(parseInt(roll[0],10))?1:parseInt(roll[0],10);
+    num = isNaN(parseInt(roll[0]))?1:Math.abs(roll[0]);
     sides = 6;
   }
   else{
@@ -368,11 +368,11 @@ function _convertToNeg(roll,adder){
         return;
       }
       if(e.getNote().match(/-/)){
-        e.setValue(e.getValue()*-1);
+        if(e.getValue() > 0){
+          e.setValue(e.getValue()*-1);
+        }
       }
     });
-  } else {
-    roll = roll * -1;
   }
   return _addToRoll(roll,adder);
 }
