@@ -231,7 +231,7 @@ function _reRoll(limit,dice){
       continue;
     }
     if(dice[cnt].getValue() <= limit){
-      var tmp = new Die(size);
+      var tmp = new Die(dice[cnt].getNote(),size);
       tmp.roll();
       dice[cnt].inValid('r');
       dice.splice(cnt+1,0,tmp);
@@ -259,7 +259,7 @@ function _explodeRoll(limit,dice){
     bns = limit === -1?size:limit;
     if(!isNaN(dice[cnt].getValue())){
       if(dice[cnt].getValue() >= bns){
-        var tmp = new Die(size);
+        var tmp = new Die(dice[cnt].getNote(),size);
         tmp.roll();
         dice.splice(cnt+1,0,tmp);
       }
