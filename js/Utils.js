@@ -40,7 +40,7 @@ function utils(saved){
   });
 }
 
-//Function to get the Result for 
+//Function to get the Result from the inputed roll
 function _getResult(){
   var result = _grabText();
   if(result !== this.error){
@@ -56,10 +56,12 @@ function _getResult(){
     document.querySelector('.result').innerHTML = result;
   }
 }
+//Function to clear the result contents
 function _clearResult(){
   document.querySelector('.roll').value = '';
   document.querySelector('.result').innerHTML = '';
 }
+//Function used to save a roll and add it to the saved list
 function _saveRoll(){
   var mtch = false, where, save = _grabText();
   if(save !== this.error){
@@ -100,6 +102,7 @@ function _saveRoll(){
     _fillInput(e.target);
   }
 }
+//Function to delete roll and remove from the saved list
 function _deleteRoll(roll){
   var save = roll.parentElement.textContent;
   for(var rll in this.saved){
@@ -110,6 +113,7 @@ function _deleteRoll(roll){
   roll.parentElement.parentElement.removeChild(roll.parentElement);
   localStorage.savedRolls = JSON.stringify(this.saved);
 }
+//Function that formats the result for display in a human readable way
 function _formatResult(dice){
   var result = '';
   for(var die in dice){
@@ -139,6 +143,7 @@ function _formatResult(dice){
   }
   return result;
 }
+//Function the grobs and validates the text
 function _grabText(){
   var roll = document.querySelector('.roll').value;
   var splt = roll.split('d');
@@ -147,6 +152,7 @@ function _grabText(){
   }
   return this.error;
 }
+//Function used to fill the Input from the saved list
 function _fillInput(roll){
   var str = roll.textContent;
   str = str.substring(1,str.length);

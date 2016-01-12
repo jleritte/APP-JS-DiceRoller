@@ -84,7 +84,7 @@ function _toPostFix(text){
   }
   return val;
 }
-//Processes the PRN and returns an array of objects and values
+//Processes the RPN and returns an array of objects and values
 function _processDice(arry){
   var roll = {}, i = 0, temp = [],keys;
   keys = arry.filter(function(e){

@@ -9,8 +9,7 @@ function Roller(){
     'loadStyles': loadStyles
   };
 
-  utils = new utils(_private.saved);
-
+//Function that loads the saved rolls and fills the GUi
   function fillSaved(){
     var template = document.querySelector('template.save'),
         list = document.querySelector('ul.saved');
@@ -29,6 +28,7 @@ function Roller(){
       utils.fillInput(e.target);
     }
   }
+//Function to load the CSS
   function loadStyles(url){
     var link = document.createElement('link');
     link.rel = 'stylesheet';
@@ -37,15 +37,18 @@ function Roller(){
     var entry = document.getElementsByTagName('title')[0];
     entry.parentNode.insertBefore(link, entry);
   }
+//Builds the pieces of the GUI and determines if the widget lives on the page by itself
   function buildGUI(where){
     where = !where?'body':'.'+where;
     if(where === 'body'){
+      document.querySelector('title').innerHTML = 'Dice Roller';
       loadFavicon();
     }
     where = document.querySelector(where);
     loadTemplate(where);
     connectKey();
   }
+//Loads the templates needed
   function loadTemplate(where){
     var templates = require('./templates'),
         keys = Object.keys(templates);
@@ -67,6 +70,7 @@ function Roller(){
     connectButton(document.querySelector('.save'));
     fillSaved();
   }
+//Adds the event listeners for different key strokes
   function connectKey(){
     document.addEventListener('keyup',function(e){
       if(e.key === "Enter"){
@@ -85,26 +89,31 @@ function Roller(){
       }
     });
   }
+//Adds a closing parenthese to the end of the string
   function autoParen(input){
     var start = input.selectionStart,
         end = input.selectionEnd;
     input.value += ')';
     input.setSelectionRange(start,end);
   }
+//adds the event listener for the save button
   function connectButton(butt){
     butt.addEventListener('click', function(){utils.saveRoll();});
   }
+//Function that shows and removes the help screen
   function toggleHelp(){
+    var contain = document.querySelector('.contain');
     if(document.querySelectorAll('.help').length === 1){
       var help = document.importNode(document.querySelector('template.help').content,true);
-      document.querySelector('.contain').insertBefore(help,document.querySelector('.roller'));
-      help = document.querySelector('.contain').firstElementChild;
+      contain.appendChild(help);
+      help = document.querySelector('.helpBlur');
       help.className = 'helpBlur help';
     }
     else{
-      document.querySelector('.contain').removeChild(document.querySelector('.contain').firstElementChild);
+      contain.removeChild(contain.lastElementChild);
     }
   }
+//Adds the Fovicon to the page if widget lives in the body
   function loadFavicon(){
     var icon = document.createElement('link');
     icon.rel = 'icon';
@@ -124,7 +133,9 @@ function Roller(){
 
 window.Roller = Roller;
 
+//Initalizer used to start the widget building process
 function _init(where){
+  utils = new utils(this.saved);
   this.loadStyles('css/roller.css');
   this.buildGUI(where);
 }
