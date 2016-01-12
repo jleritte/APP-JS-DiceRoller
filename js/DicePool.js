@@ -6,6 +6,9 @@ function DicePool(text){
   };
 //Internal Functon to create pool
   function parseText(roll){
+    if(roll.match('dFS')){
+      roll = roll.replace('dFS','d6!-d6!');
+    }
     roll = _toPostFix(roll);
     roll = _processDice(roll);
     return roll;
@@ -47,11 +50,10 @@ function _toPostFix(text){
   });
   text.forEach(function(e,i,a){
     var PRECEDENCE = {'r':5,'!':4,'v':3,'^':3,'t':2,'+':1,'-':1};
-    if(e.match(/-/) && e.length === 1){
+    if(e.match(/-/) && e.length === 1 && a[i+1].match(/d/)){
       a[i+1] = e+a[i+1];
-      e = '+';
     }
-    if(e.match(/[+v^r!act\(\)]/)){
+    if(e.match(/[-+v^r!act\(\)]/)&&e.length === 1){
       var cur = PRECEDENCE[e],
           last = PRECEDENCE[ops[0]];
       if(e === ')'){
@@ -89,8 +91,8 @@ function _processDice(arry){
     return e.match(/d/);
   });
   while(arry.length){
-    if(arry[0].match(/[v^r!tca+]/)){
-      if(i + 2 === temp.length||arry[0] === '+'){
+    if(arry[0].match(/[v^r!tca+]/)||(arry[0] === '-'&&arry[0].length === 1)){
+      if(i + 2 === temp.length||arry[0] === '+'||arry[0] === '-'){
         temp.push(_processAdders(arry.shift(),temp.pop(),temp.pop()));
         if(i >= temp.length){ i = temp.length - 1;}
       } else {
@@ -104,23 +106,22 @@ function _processDice(arry){
       }
     }
   }
-  temp[0].forEach(function(e){
+  temp[0].forEach(function(e,i,a){
     if(typeof e === 'object'){
-      var temp = keys.filter(function(f){
-        return f.match('d'+e.getSize());
-      });
+      var temp = e.getNote();
       if(temp in roll){
         roll[temp].push(e);
       } else {
         roll[temp] = [e];
       }
     } else if(typeof e === 'number'){
-      var tmp = new Die(0);
-      tmp.setValue(e);
+      a[i] = new Die('+',0);
+      a[i].setValue(e);
+      e = a[i];
       if('+' in roll){
-        roll['+'].push(tmp);
+        roll['+'].push(e);
       } else {
-        roll['+'] = [tmp];
+        roll['+'] = [e];
       }
     } else {
       roll.Success = e.replace(/[sb]/g,'');
@@ -152,28 +153,25 @@ function _getDice(note){
     return parseInt(note);
   }
   while(dice.length < num){
-    dice.push(new Die(sides));
+    dice.push(new Die(note,sides));
   }
   _rollDice(note,dice);
   return dice;
 }
 //Rolls and array of dice and applies special rules if applicable
 function _rollDice(note,dice){
-  var temp;
-  for(var i = 0; i < dice.length; i++){
-    dice[i].roll();
-  }
+  dice.forEach(function(e){
+    e.roll();
+  });
   if(/\d*d%/.test(note)){
     var prcnt = 0;
-    for(i = 0; i < dice.length; i++){
-      temp = new Die('%');
-      temp.setValue(dice[i].getValue() - 1);
-      dice[i] = temp;
-    }
+    dice.forEach(function(e){
+      e.setValue(e.getValue() - 1);
+    });
     dice[0].setValue(dice[0].getValue() * 10);
-    for(i = 0; i < dice.length; i++){
-      prcnt += dice[i].getValue();
-    }
+    dice.forEach(function(e){
+      prcnt += e.getValue();
+    });
     if(prcnt === 0){
       prcnt = 100;
     }
@@ -181,21 +179,19 @@ function _rollDice(note,dice){
   }
   else if(/\d*dF/.test(note)){
     var total = 0;
-    for(i = 0; i < dice.length; i++){
-      temp = new Die('F');
-      var tmp = dice[i].getValue();
+    dice.forEach(function(e){
+      var tmp = e.getValue();
       if(tmp === 2||tmp === 3){
-        temp.setValue(-1);
+        e.setValue(-1);
       }
       else if(tmp === 4||tmp === 6){
-        temp.setValue(0);
+        e.setValue(0);
       }
       else if(tmp === 1||tmp === 5){
-        temp.setValue(1);
+        e.setValue(1);
       }
-      dice[i] = temp;
-      total += dice[i].getValue();
-    }
+      total += e.getValue();
+    });
     dice = total;
   }
   return dice;
@@ -214,6 +210,7 @@ function _processAdders(op,o1,o2){
     case 'tac':
     case 'tca':  newO = _countSuccess(op,o1,o2);break;
     case '+':  newO = _addToRoll(o1,o2);break;
+    case '-':  newO = _convertToNeg(o1,o2);break;
   }
   return newO;
 }
@@ -259,7 +256,7 @@ function _explodeRoll(limit,dice){
       break;
     }
     size = dice[cnt].getSize();
-    bns = limit === -1?size - 1:limit;
+    bns = limit === -1?size:limit;
     if(!isNaN(dice[cnt].getValue())){
       if(dice[cnt].getValue() >= bns){
         var tmp = new Die(size);
@@ -280,6 +277,9 @@ function _dropLowest(cnt,dice){
       actv.push(i);
     }
   });
+  if(!actv.length){
+    return dice;
+  }
   tote = cnt === -1?1:cnt;
   for(j = 0; j < tote;j++){
     if(tote < 0){
@@ -309,6 +309,9 @@ function _dropHighest(cnt,dice){
       actv.push(i);
     }
   });
+  if(!actv.length){
+    return dice;
+  }
   tote = cnt === -1?1:cnt;
   for(j = 0; j < tote;j++){
     if(tote < 0){
@@ -357,17 +360,28 @@ function _countSuccess(op,trgt,dice){
 function _addToRoll(adder,roll){
   return [].concat.apply([],[roll,adder]);
 }
-//Function to total rolls value if not success based;
+//Function to convert values to negative for subtration
+function _convertToNeg(roll,adder){
+  if(typeof roll === 'object'){
+    roll.forEach(function(e){
+      if(typeof e !== 'object'){
+        return;
+      }
+      if(e.getNote().match(/-/)){
+        e.setValue(e.getValue()*-1);
+      }
+    });
+  } else {
+    roll = roll * -1;
+  }
+  return _addToRoll(roll,adder);
+}
+//Function to total rolls value if not success based
 function _getTotal(dice){
   var total = 0;
   dice.forEach(function(e,i,a){
-    if(typeof e === 'object'){
-      if(typeof e.getValue() === 'number'){
-        total += e.getValue();
-      }
-    } else {
-      total += e;
-      a[i] = {'value': e};
+    if(typeof e.getValue() === 'number'){
+      total += e.getValue();
     }
   });
   return total;

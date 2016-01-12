@@ -119,7 +119,7 @@ function _formatResult(dice){
       for(i=0;i<die.length;i++){
         if(isNaN(die[i].getValue())){
           var num = die[i].getValue();
-          num = num.substr(num.length-1);
+          num = num.replace(/[A-z]/g,'');
           result += '<span class="disabled">'+num+'</span> ';
         }
         else{
