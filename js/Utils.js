@@ -5,10 +5,11 @@ function utils(){
   var _private = {
     'error': 'Check Input',
     'saved': localStorage.savedRolls ? JSON.parse(localStorage.savedRolls): {},
-    'grabText': _grabText
+    'grabText': _grabText,
+    'getResult': _getResult
   };
 
-//Function the grabs and validates the text
+//Function the grobs and validates the text
   function _grabText(){
     var roll = document.querySelector('.roll').value;
     var splt = roll.split('d');
@@ -41,6 +42,10 @@ function utils(){
       value: _formatResult.bind(_private),
       emunerable: true
     },
+    'grabtext': {
+      value: _grabText.bind(_private),
+      emunerable: true
+    },
     'fillInput': {
       value: _fillInput.bind(_private),
       emunerable: true
@@ -50,7 +55,6 @@ function utils(){
 
 //Function to get the Result from the inputed roll
 function _getResult(){
-  console.log(result,this);
   var result = this.grabText();
   if(result !== this.error){
     dice = new DicePool(result);
@@ -72,7 +76,7 @@ function _clearResult(){
 }
 //Function used to save a roll and add it to the saved list
 function _saveRoll(){
-  var mtch = false, where, save = _grabText();
+  var mtch = false, where, save = this.grabText();
   if(save !== this.error){
     var name = prompt("Enter Name For Roll",save);
     if(name === null) {
@@ -157,7 +161,7 @@ function _fillInput(roll){
   var str = roll.textContent;
   str = str.substring(1,str.length);
   document.querySelector('.roll').value = this.saved[str];
-  _getResult();
+  this.getResult();
 }
 
 module.exports = utils;

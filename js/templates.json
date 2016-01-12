@@ -2,7 +2,8 @@
 {
   "game": ["<div class=\"contain\">",
       "<div class=\"roller\">",
-        "<div>Type Roll below - Press F1 to toggle Help</div>",
+        "<div>Type Roll below - Hit Enter to roll</div>",
+        "<div>Press F1 to toggle Help</div>",
         "<input class=\"roll\" type=\"text\"></input>",
         "<button class=\"save\">Save</button>",
         "<div class=\"result\"></div>",

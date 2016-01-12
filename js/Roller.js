@@ -79,7 +79,6 @@ function Roller(){
       }
     });
     document.addEventListener('keyup',function(e){
-      console.log(e);
       if(e.which === 13){
         utils.getResult();
       }
@@ -142,7 +141,6 @@ window.Roller = Roller;
 
 //Initalizer used to start the widget building process
 function _init(where){
-  console.log(utils);
   this.loadStyles('css/roller.css');
   this.buildGUI(where);
 }
