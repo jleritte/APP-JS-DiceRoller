@@ -9,8 +9,10 @@ DIV, BODY, HTML, SPAN, TD{
 }
 UL{
   list-style-type:none;
-  margin:0;
   padding:0;
+}
+LI > UL{
+  padding-left: 25px;
 }
 .contain{
   height:100%;
@@ -87,16 +89,17 @@ SPAN.max{
   color:#2f2;
 }
 DIV.helpBlur{
-  width:100%;
-  padding:10%;
-  background:#000;
-  opacity: 0.8;
+  max-width: 731px;
+  background:rgba(0,0,0,0.8);
   top:0;
   left:0;
-  position:absolute;
+  position:fixed;
   z-index:1000;
+  pointer-events: none;
 }
-PRE.helpContain{
+DIV.helpContain{
   background:#fff;
-  opacity:1;
+  margin: 10% auto;
+  padding: 2px;
+  max-width: 90%;
 }
