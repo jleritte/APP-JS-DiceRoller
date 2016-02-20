@@ -100,7 +100,7 @@ function _saveRoll(){
     list.appendChild(li);
     li = list.lastElementChild;
     li.firstElementChild.addEventListener('click',deleteR);
-    li.appendChild(document.createTextNode(name));
+    li.lastElementChild.textContent = name;
     li.addEventListener('dblclick',fillI);
       }
     }else{
@@ -159,8 +159,8 @@ function _formatResult(dice){
 //Function used to fill the Input from the saved list
 function _fillInput(roll){
   var str = roll.textContent;
-  str = str.substring(1,str.length);
   document.querySelector('.roll').value = this.saved[str];
+  window.location.hash = 'roll';
   this.getResult();
 }
 

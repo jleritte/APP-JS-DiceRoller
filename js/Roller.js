@@ -19,7 +19,7 @@ function Roller(){
       list.appendChild(li);
       li = list.lastElementChild;
       li.firstElementChild.addEventListener('click',deleteR);
-      li.appendChild(document.createTextNode(roll));
+      li.lastElementChild.textContent = roll;
       li.addEventListener('dblclick',fillI);
     }
     function deleteR(e) {
