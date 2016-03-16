@@ -142,5 +142,6 @@ window.Roller = Roller;
 //Initalizer used to start the widget building process
 function _init(where){
   this.loadStyles('css/roller.css');
+  window.location.hash = 'roll';
   this.buildGUI(where);
 }
