@@ -49,7 +49,7 @@ function _toPostFix(text){
     return keep;
   });
   text.forEach(function(e,i,a){
-    var PRECEDENCE = {'r':5,'!':4,'v':3,'^':3,'t':2,'+':1,'-':1};
+    const PRECEDENCE = {'r':5,'!':4,'v':3,'^':3,'t':2,'+':1,'-':1};
     if(e.match(/-/) && e.length === 1){
       a[i+1] = e+a[i+1];
     }
