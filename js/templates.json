@@ -4,7 +4,7 @@
     "<div id=\"roll\" class=\"tab\">",
     "<a href=\"#roll\">Roller</a>",
   "<div class=\"roller content\">",
-    "<input class=\"roll\" type=\"text\"></input>",
+    "<input class=\"roll\" type=\"text\" value=\"d%+4dF+5d8+4-2+6d12r3v2^4!6\"></input>",
     "<input class=\"save\" type=\"button\" value=\"Save\"></input>",
     "<div class=\"result\"></div>",
   "</div>",

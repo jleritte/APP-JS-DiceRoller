@@ -1,105 +1,87 @@
-var Die = require('./Die.js');
-//This is an object to handle a group of dice
-function DicePool(text){
-  var _private = {
-    dice: parseText(text)
-  };
-//Internal Functon to create pool
-  function parseText(roll){
-    if(roll.match('dFS')){
-      roll = roll.replace('dFS','d6!-d6!');
-    }
-    roll = _toPostFix(roll);
-    roll = _processDice(roll);
-    return roll;
+let Die = require('./Die.js'),
+    dice = {}, _text
+
+class DicePool {
+  constructor(text) {
+    dice = _parseText(text)
+    text = _text
+  }
+  get pool() {
+    dice.text = _text
+    return dice
+  }
+}
+
+function _parseText(roll){
+  if(roll.match('dFS')){
+    roll = roll.replace('dFS','d6!-d6!')
   }
 
-//Public functions
-  Object.defineProperties(this,{
-    'getPool': {
-      value: _getPool.bind(_private),
-      emunerable: true
-    }
-  });
+  return _processDice(_toPostFix(roll))
 }
 
-//Returns the dice Pool
-function _getPool(){
-  return this.dice;
-}
+// //This is an object to handle a group of dice
+// function DicePool(text){
+//   var _private = {
+//     dice: parseText(text)
+//   };
+// //Internal Functon to create pool
+
+// //Public functions
+//   Object.defineProperties(this,{
+//     'getPool': {
+//       value: _getPool.bind(_private),
+//       emunerable: true
+//     }
+//   });
+// }
+
+// //Returns the dice Pool
+// function _getPool(){
+//   return this.dice;
+// }
 //Converts the String to a Postfix(RPN) array for processing
 function _toPostFix(text){
-  var val = [],ops = [];
-  text = text.split(/([-+v^r!act\(\)])/);
-  text = text.filter(function(e,i,a){
-    var keep = true;
-    if(i === 0 && e === ''){
-      return false;
-    }
-    if(e === ''){
-      if(a[i-1] === ')'||a[i-1] === 'a'||a[i-1] === 'c'){
-        keep = false;
-      } else if(a[i+1] === "("){
-        keep = false;
-        if(a[i-1].match(/[v^r!tca]/)){
-          keep = true;
-        }
-      }
-    }
-    return keep;
-  });
-  text.forEach(function(e,i,a){
-    const PRECEDENCE = {'r':5,'!':4,'v':3,'^':3,'t':2,'+':1,'-':1};
-    if(e.match(/-/) && e.length === 1){
-      a[i+1] = e+a[i+1];
-    }
-    if(e.match(/[-+v^r!act\(\)]/)&&e.length === 1){
-      var cur = PRECEDENCE[e],
-          last = PRECEDENCE[ops[0]];
-      if(e === ')'){
-        var esc = true;
-        while(esc){
-          if(ops[0] !== '('){
-            val.push(ops.shift());
-            if(ops[0] === '('){
-              ops.shift();
-              esc = false;
-            }
-          }
-        }
-      } else if(e === 'a'||e === 'c'){
-        ops[0] += e;
-      } else if(cur < last&& e !== '('){
-        val.push(ops.shift());
-        ops.unshift(e);
+  let val = [],ops = []
+  const PRECEDENCE = {'r':5,'!':4,'v':3,'^':3,'t':2,'+':1,'-':1}
+
+  text = text.split(/([-+v^r!act])/)
+            .filter((e,i,a) => !(e === ''&&(i === 0||a[i-1] === 'a'||a[i-1] === 'c')))
+  for(let e of text) {
+    if(e.match(/[-+v^r!act]/)&&e.length === 1){
+      let cur = PRECEDENCE[e],
+          last = PRECEDENCE[ops[0]]
+      if(e === 'a'||e === 'c'){
+        ops[0] += e
+      } else if(cur < last){
+        val.push(ops.shift())
+        ops.unshift(e)
       } else{
-        ops.unshift(e);
+        ops.unshift(e)
       }
     } else {
-      val.push(e);
+      val.push(e)
     }
-  });
-  while(ops.length){
-    val.push(ops.shift());
   }
-  return val;
+  val = val.concat(ops)
+
+  return val
 }
 //Processes the RPN and returns an array of objects and values
 function _processDice(arry){
-  var roll = {}, i = 0, temp = [],keys;
-  keys = arry.filter(function(e){
-    return e.match(/d/);
-  });
+  let roll = {}, i = 0, temp = []
+
   while(arry.length){
-    if(arry[0].match(/[v^r!tca+]/)||(arry[0] === '-'&&arry[0].length === 1)){
+    // console.log(arry[0],i,temp)
+    if(arry[0].match(/[v^r!tca+]/)||(arry[0] === '-' && arry[0].length === 1)){
       if(i + 2 === temp.length||arry[0] === '+'||arry[0] === '-'){
-        temp.push(_processAdders(arry.shift(),temp.pop(),temp.pop()));
-        if(i >= temp.length){ i = temp.length - 1;}
+        temp.push(_processAdders(arry.shift(),temp.pop(),temp.pop()))
+        i = i >= temp.length ? i = temp.length - 1 : i
       } else {
         temp[i] = _processAdders(arry.shift(),temp.pop(),temp[i]);
       }
     } else {
-      t = _getDice(arry.shift());
+      let t = _getDice(arry.shift());
       temp.push(t);
       if(Array.isArray(t)){
         i = temp.length - 1;
@@ -108,7 +90,7 @@ function _processDice(arry){
   }
   temp[0].forEach(function(e,i,a){
     if(typeof e === 'object'){
-      var temp = e.getNote();
+      var temp = e.note;
       if(temp in roll){
         roll[temp].push(e);
       } else {
@@ -116,7 +98,7 @@ function _processDice(arry){
       }
     } else if(typeof e === 'number'){
       a[i] = new Die('+',0);
-      a[i].setValue(e);
+      a[i].value = e;
       e = a[i];
       if('+' in roll){
         roll['+'].push(e);
@@ -141,8 +123,8 @@ function _getDice(note){
     sides = parseInt(roll[1]);
   }
   else if(/\d*d%/.test(note)){
-    num = 2;
-    sides = 10;
+    num = 1;
+    sides = 100;
   }
   else if(/\d*dF/.test(note)){
     roll = note.split('d');
@@ -160,37 +142,20 @@ function _getDice(note){
 }
 //Rolls and array of dice and applies special rules if applicable
 function _rollDice(note,dice){
-  dice.forEach(function(e){
-    e.roll();
-  });
-  if(/\d*d%/.test(note)){
-    var prcnt = 0;
-    dice.forEach(function(e){
-      e.setValue(e.getValue() - 1);
-    });
-    dice[0].setValue(dice[0].getValue() * 10);
-    dice.forEach(function(e){
-      prcnt += e.getValue();
-    });
-    if(prcnt === 0){
-      prcnt = 100;
-    }
-    dice = prcnt;
-  }
-  else if(/\d*dF/.test(note)){
+  if(/\d*dF/.test(note)){
     var total = 0;
     dice.forEach(function(e){
-      var tmp = e.getValue();
+      var tmp = e.value;
       if(tmp === 2||tmp === 3){
-        e.setValue(-1);
+        e.value = -1;
       }
       else if(tmp === 4||tmp === 6){
-        e.setValue(0);
+        e.value = 0;
       }
       else if(tmp === 1||tmp === 5){
-        e.setValue(1);
+        e.value = 1;
       }
-      total += e.getValue();
+      total += e.value;
     });
     dice = total;
   }
@@ -226,12 +191,12 @@ function _reRoll(limit,dice){
     if(cnt >= dice.length){
       break;
     }
-    size = dice[cnt].getSize();
+    size = dice[cnt].size;
     if(limit === size){
       continue;
     }
-    if(dice[cnt].getValue() <= limit){
-      var tmp = new Die(dice[cnt].getNote(),size);
+    if(dice[cnt].value <= limit){
+      var tmp = new Die(dice[cnt].note,size);
       tmp.roll();
       dice[cnt].inValid('r');
       dice.splice(cnt+1,0,tmp);
@@ -255,11 +220,11 @@ function _explodeRoll(limit,dice){
     if(limit === 1){
       break;
     }
-    size = dice[cnt].getSize();
+    size = dice[cnt].size;
     bns = limit === -1?size:limit;
-    if(!isNaN(dice[cnt].getValue())){
-      if(dice[cnt].getValue() >= bns){
-        var tmp = new Die(dice[cnt].getNote(),size);
+    if(!isNaN(dice[cnt].value)){
+      if(dice[cnt].value >= bns){
+        var tmp = new Die(dice[cnt].note,size);
         tmp.roll();
         dice.splice(cnt+1,0,tmp);
       }
@@ -273,7 +238,7 @@ function _dropLowest(cnt,dice){
   cnt =  isNaN(cnt)?-1:cnt;
   var i, j, low, pos, pop, tote, actv = [];
   dice.forEach(function(e,i){
-    if(!isNaN(e.getValue())){
+    if(!isNaN(e.value)){
       actv.push(i);
     }
   });
@@ -285,12 +250,12 @@ function _dropLowest(cnt,dice){
     if(tote < 0){
       break;
     }
-    low = dice[actv[0]].getValue();
+    low = dice[actv[0]].value;
     pos = actv[0];
     pop = 0;
     for(i = 0; i < actv.length;i++){
-      if(dice[actv[i]].getValue() < low){
-        low = dice[actv[i]].getValue();
+      if(dice[actv[i]].value < low){
+        low = dice[actv[i]].value;
         pos = actv[i];
         pop = i;
       }
@@ -305,7 +270,7 @@ function _dropHighest(cnt,dice){
   cnt =  isNaN(cnt)?-1:cnt;
   var i, j, hgh, pos, pop, tote, actv = [];
   dice.forEach(function(e,i){
-    if(!isNaN(e.getValue())){
+    if(!isNaN(e.value)){
       actv.push(i);
     }
   });
@@ -317,12 +282,12 @@ function _dropHighest(cnt,dice){
     if(tote < 0){
       break;
     }
-    hgh = dice[actv[0]].getValue();
+    hgh = dice[actv[0]].value;
     pos = actv[0];
     pop = 0;
     for(i = 0;i < actv.length;i++){
-      if(dice[actv[i]].getValue() > hgh){
-        hgh = dice[actv[i]].getValue();
+      if(dice[actv[i]].value > hgh){
+        hgh = dice[actv[i]].value;
         pos = actv[i];
         pop = i;
       }
@@ -340,15 +305,15 @@ function _countSuccess(op,trgt,dice){
   dice.forEach(function(e){
     var t = isNaN(trgt)?-1:trgt;
     if(t === -1){
-      t = e.getSize();
+      t = e.size;
     }
-    if(e.getValue() >= t){
+    if(e.value >= t){
       success++;
-      if(e.getValue() === e.getSize() && bonus){
+      if(e.value === e.size && bonus){
         success++;
       }
     }
-    if(e.getValue() === 1 && botch){
+    if(e.value === 1 && botch){
       success--;
     }
   });
@@ -362,14 +327,15 @@ function _addToRoll(adder,roll){
 }
 //Function to convert values to negative for subtration
 function _convertToNeg(roll,adder){
+  console.log(roll,adder)
   if(typeof roll === 'object'){
     roll.forEach(function(e){
       if(typeof e !== 'object'){
         return;
       }
-      if(e.getNote().match(/-/)){
-        if(e.getValue() > 0){
-          e.setValue(e.getValue()*-1);
+      if(e.note.match(/-/)){
+        if(e.value > 0){
+          e.value = e.value*-1;
         }
       }
     });
@@ -380,8 +346,8 @@ function _convertToNeg(roll,adder){
 function _getTotal(dice){
   var total = 0;
   dice.forEach(function(e,i,a){
-    if(typeof e.getValue() === 'number'){
-      total += e.getValue();
+    if(typeof e.value === 'number'){
+      total += e.value;
     }
   });
   return total;

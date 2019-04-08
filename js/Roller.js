@@ -7,7 +7,7 @@ function Roller(){
     'saved': localStorage.savedRolls ? JSON.parse(localStorage.savedRolls): {},
     'buildGUI': buildGUI,
     'loadStyles': loadStyles
-  };
+  },
   utils = new Utils();
 
 //Function that loads the saved rolls and fills the GUi

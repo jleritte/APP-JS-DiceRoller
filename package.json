@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/jleritte/APP-JS-DiceRoller",
   "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babelify": "^8.0.0",
     "grunt": "^0.4.5",
     "grunt-browserify": "^4.0.1",
     "grunt-contrib-cssmin": "^1.0.0",

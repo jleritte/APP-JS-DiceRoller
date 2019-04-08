@@ -8,14 +8,29 @@ module.exports = function(grunt) {
         curly: true,
         eqeqeq: true,
         eqnull: true,
-        browser: true
+        browser: true,
+        esnext: true,
+        asi: true,
+        debug: true
       },
       files: {
         src: ['js/*.js']
       }
     },
     browserify: {
-      'resources/app.js': ['js/Roller.js']
+      dist: {
+        options: {
+          transform: [['babelify',{presets: ['es2015','react']}]],
+          browserifyOptions: {
+            paths: [
+              'js',
+              'js/**'
+            ]
+          }
+        },
+        src: ['js/Roller.js'],
+        dest: 'resources/app.js',
+      }
     },
     uglify: {
       build: {

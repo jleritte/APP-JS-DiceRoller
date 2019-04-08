@@ -55,10 +55,10 @@ function utils(){
 
 //Function to get the Result from the inputed roll
 function _getResult(){
-  var result = this.grabText();
+  var result = this.grabText(),dice;
   if(result !== this.error){
     dice = new DicePool(result);
-    dice = dice.getPool();
+    dice = dice.pool;
     document.querySelector('.result').innerHTML = _formatResult(dice);
     var clear = document.createElement('button');
     clear.textContent = 'Clear';
@@ -133,18 +133,18 @@ function _formatResult(dice){
     result += '<b>'+die+':</b> ';
     die = dice[die];
     if(Array.isArray(die)){
-      for(i=0;i<die.length;i++){
-        if(isNaN(die[i].getValue())){
-          var num = die[i].getValue();
+      for(let i=0;i<die.length;i++){
+        if(isNaN(die[i].value)){
+          var num = die[i].value;
           num = num.replace(/[A-z]/g,'');
           result += '<span class="disabled">'+num+'</span> ';
         }
         else{
-          if(die[i].getValue() === die[i].getSize()){
-            result += '<span class="max">'+die[i].getValue()+'</span> ';
+          if(die[i].value === die[i].size){
+            result += '<span class="max">'+die[i].value+'</span> ';
           }
           else{
-            result += '<span>'+die[i].getValue()+'</span> ';
+            result += '<span>'+die[i].value+'</span> ';
           }
         }
       }
