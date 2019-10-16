@@ -1,5 +1,7 @@
-var DicePool = require('./DicePool.js');
-var Utils = require('./Utils.js');
+import DicePool from './DicePool.js'
+import utils from './Utils.js'
+
+window.DicePool = DicePool
 
 // Working on turning into modules and will Reactify it ultimately
 function Roller(){
@@ -67,7 +69,7 @@ function Roller(){
     });
     document.querySelector('input').addEventListener('focus',function(e){
       e.target.select();
-    }); 
+    });
     connectButton(document.querySelector('.save'));
     fillSaved();
   }

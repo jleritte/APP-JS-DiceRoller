@@ -1,60 +1,26 @@
-var DicePool = require('./DicePool.js');
+import DicePool from './DicePool.js'
 
-//This is a object to hold util functions
-function utils(){
-  var _private = {
-    'error': 'Check Input',
-    'saved': localStorage.savedRolls ? JSON.parse(localStorage.savedRolls): {},
-    'grabText': _grabText,
-    'getResult': _getResult
-  };
+let error = `Check Input`,
+    saved = localStorage.savedRolls ? JSON.parse(localStorage.savedRolls) : {}
 
-//Function the grobs and validates the text
-  function _grabText(){
-    var roll = document.querySelector('.roll').value;
-    var splt = roll.split('d');
-    if(splt.length > 1){
-      return roll;
-    }
-    return _private.error;
+export default class utils {
+  constructor() {
+    console.log(`Utils Initialized`)
   }
+}
 
-//Public functions
-  Object.defineProperties(this,{
-    private: _private,
-    'getResult': {
-      value: _getResult.bind(_private),
-      emunerable: true
-    },
-    'clearResult': {
-      value: _clearResult.bind(_private),
-      emunerable: true
-    },
-    'saveRoll': {
-      value: _saveRoll.bind(_private),
-      emunerable: true
-    },
-    'deleteRoll': {
-      value: _deleteRoll.bind(_private),
-      emunerable: true
-    },
-    'formatResult': {
-      value: _formatResult.bind(_private),
-      emunerable: true
-    },
-    'grabtext': {
-      value: _grabText.bind(_private),
-      emunerable: true
-    },
-    'fillInput': {
-      value: _fillInput.bind(_private),
-      emunerable: true
-    }
-  });
+//Function the grabs and validates the text
+function grabText(){
+  var roll = document.querySelector('.roll').value;
+  var splt = roll.split('d');
+  if(splt.length > 1){
+    return roll;
+  }
+  return _private.error;
 }
 
 //Function to get the Result from the inputed roll
-function _getResult(){
+function getResult(){
   var result = this.grabText(),dice;
   if(result !== this.error){
     dice = new DicePool(result);
@@ -69,6 +35,53 @@ function _getResult(){
     document.querySelector('.result').innerHTML = result;
   }
 }
+
+
+
+//This is a object to hold util functions
+// function utils(){
+//   var _private = {
+//     'error': 'Check Input',
+//     'saved': localStorage.savedRolls ? JSON.parse(localStorage.savedRolls): {},
+//     'grabText': _grabText,
+//     'getResult': _getResult
+//   };
+
+
+// //Public functions
+//   Object.defineProperties(this,{
+//     private: _private,
+//     'getResult': {
+//       value: _getResult.bind(_private),
+//       emunerable: true
+//     },
+//     'clearResult': {
+//       value: _clearResult.bind(_private),
+//       emunerable: true
+//     },
+//     'saveRoll': {
+//       value: _saveRoll.bind(_private),
+//       emunerable: true
+//     },
+//     'deleteRoll': {
+//       value: _deleteRoll.bind(_private),
+//       emunerable: true
+//     },
+//     'formatResult': {
+//       value: _formatResult.bind(_private),
+//       emunerable: true
+//     },
+//     'grabtext': {
+//       value: _grabText.bind(_private),
+//       emunerable: true
+//     },
+//     'fillInput': {
+//       value: _fillInput.bind(_private),
+//       emunerable: true
+//     }
+//   });
+// }
+
 //Function to clear the result contents
 function _clearResult(){
   document.querySelector('.roll').value = '';
@@ -163,5 +176,3 @@ function _fillInput(roll){
   window.location.hash = 'roll';
   this.getResult();
 }
-
-module.exports = utils;

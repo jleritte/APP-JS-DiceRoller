@@ -1,28 +1,36 @@
-class Die{
+let dice = new WeakMap()
+
+export default class Die{
   constructor(note,sides){
-    this._note = note
-    this._sides = sides
-    this._value = 0
-    this.roll()
+    dice.set(this,{
+      note,
+      sides,
+      value: 0
+    })
+    roll(this)
   }
   get note() {
-    return this._note
+    return dice.get(this).note
   }
   get size() {
-    return this._sides
+    return dice.get(this).sides
   }
   get value() {
-    return this._value
+    return dice.get(this).value
+  }
+  get roll() {
+    roll(this)
+    return dice.get(this).value
   }
   set value(value) {
-    this._value = value
+    dice.get(this).value = value
   }
-  inValid(text) {
-    this._value = text + this.value
-  }
-  roll() {
-    this.value = Math.floor(Math.random() * (this.size) + 1)
+  set inValid(text) {
+    let die = dice.get(this)
+    die.value = text + die.value
   }
 }
 
-module.exports = Die;
+function roll(die) {
+  die.value = Math.floor(Math.random() * (die.size) + 1)
+}

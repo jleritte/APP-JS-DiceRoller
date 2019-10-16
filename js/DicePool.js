@@ -1,7 +1,7 @@
-let Die = require('./Die.js'),
-    dice = {}, _text
+import Die from './Die.js'
+let  dice = {}, _text
 
-class DicePool {
+export default class DicePool {
   constructor(text) {
     dice = _parseText(text)
     text = _text
@@ -20,52 +20,32 @@ function _parseText(roll){
   return _processDice(_toPostFix(roll))
 }
 
-// //This is an object to handle a group of dice
-// function DicePool(text){
-//   var _private = {
-//     dice: parseText(text)
-//   };
-// //Internal Functon to create pool
-
-// //Public functions
-//   Object.defineProperties(this,{
-//     'getPool': {
-//       value: _getPool.bind(_private),
-//       emunerable: true
-//     }
-//   });
-// }
-
-// //Returns the dice Pool
-// function _getPool(){
-//   return this.dice;
-// }
 //Converts the String to a Postfix(RPN) array for processing
 function _toPostFix(text){
-  let val = [],ops = []
   const PRECEDENCE = {'r':5,'!':4,'v':3,'^':3,'t':2,'+':1,'-':1}
+  let values = [],operands = []
 
   text = text.split(/([-+v^r!act])/)
             .filter((e,i,a) => !(e === ''&&(i === 0||a[i-1] === 'a'||a[i-1] === 'c')))
   for(let e of text) {
     if(e.match(/[-+v^r!act]/)&&e.length === 1){
       let cur = PRECEDENCE[e],
-          last = PRECEDENCE[ops[0]]
+          last = PRECEDENCE[operands[0]]
       if(e === 'a'||e === 'c'){
-        ops[0] += e
+        operands[0] += e
       } else if(cur < last){
-        val.push(ops.shift())
-        ops.unshift(e)
+        values.push(operands.shift())
+        operands.unshift(e)
       } else{
-        ops.unshift(e)
+        operands.unshift(e)
       }
     } else {
-      val.push(e)
+      values.push(e)
     }
   }
-  val = val.concat(ops)
+  values = values.concat(operands)
 
-  return val
+  return values
 }
 //Processes the RPN and returns an array of objects and values
 function _processDice(arry){
@@ -114,7 +94,7 @@ function _processDice(arry){
   }
   return roll;
 }
-//Takes a string notation and converts *d* into array of dice or numder into int
+//Takes a string notation and converts *d* into array of dice or number into int
 function _getDice(note){
   var num,sides,dice =[];
   if(/\d*d\d+/.test(note)){
@@ -179,7 +159,7 @@ function _processAdders(op,o1,o2){
   }
   return newO;
 }
-//Function to reroll dice based on a target number or lower, will use 1 if no number is given
+//Function to re-roll dice based on a target number or lower, will use 1 if no number is given
 function _reRoll(limit,dice){
   limit = isNaN(limit)?1:limit;
   var cnt = 0, size;
@@ -233,7 +213,7 @@ function _explodeRoll(limit,dice){
   }
   return dice;
 }
-//Function to drop lowest [number] of rolls out of the pool. Will only drop one if no numebr given
+//Function to drop lowest [number] of rolls out of the pool. Will only drop one if no number given
 function _dropLowest(cnt,dice){
   cnt =  isNaN(cnt)?-1:cnt;
   var i, j, low, pos, pop, tote, actv = [];
@@ -265,7 +245,7 @@ function _dropLowest(cnt,dice){
   }
   return dice;
 }
-//Function to drop highest [number] of rolls out of the pool. Will only drop one if no numebr given
+//Function to drop highest [number] of rolls out of the pool. Will only drop one if no number given
 function _dropHighest(cnt,dice){
   cnt =  isNaN(cnt)?-1:cnt;
   var i, j, hgh, pos, pop, tote, actv = [];
@@ -297,7 +277,7 @@ function _dropHighest(cnt,dice){
   }
   return dice;
 }
-//Function to switch to Success based rolling. Moditfiers can be added to include botch(1 subtracts) or bonus(max value adds 1).
+//Function to switch to Success based rolling. Modifiers can be added to include botch(1 subtracts) or bonus(max value adds 1).
 function _countSuccess(op,trgt,dice){
   var success = 0,
     botch = op.match(/c/)?true:false,
@@ -325,7 +305,7 @@ function _countSuccess(op,trgt,dice){
 function _addToRoll(adder,roll){
   return [].concat.apply([],[roll,adder]);
 }
-//Function to convert values to negative for subtration
+//Function to convert values to negative for subtraction
 function _convertToNeg(roll,adder){
   console.log(roll,adder)
   if(typeof roll === 'object'){
@@ -352,5 +332,3 @@ function _getTotal(dice){
   });
   return total;
 }
-
-module.exports = DicePool;
