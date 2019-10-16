@@ -1,3 +1,6 @@
+// python -m SimpleHTTPServer 9001
+// python -m http.server 9001
+
 import DicePool from './DicePool.js'
 import utils from './Utils.js'
 

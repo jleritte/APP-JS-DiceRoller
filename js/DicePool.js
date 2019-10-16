@@ -3,7 +3,7 @@ let  dice = {}, _text
 
 export default class DicePool {
   constructor(text) {
-    dice = _parseText(text)
+    dice = parseText(text)
     text = _text
   }
   get pool() {
@@ -12,61 +12,65 @@ export default class DicePool {
   }
 }
 
-function _parseText(roll){
+function parseText(roll){
   if(roll.match('dFS')){
     roll = roll.replace('dFS','d6!-d6!')
   }
 
-  return _processDice(_toPostFix(roll))
+  return processDice(roll)
 }
 
 //Converts the String to a Postfix(RPN) array for processing
-function _toPostFix(text){
+function* toPostFix(text){
   const PRECEDENCE = {'r':5,'!':4,'v':3,'^':3,'t':2,'+':1,'-':1}
-  let values = [],operands = []
+  let operands = []
 
-  text = text.split(/([-+v^r!act])/)
-            .filter((e,i,a) => !(e === ''&&(i === 0||a[i-1] === 'a'||a[i-1] === 'c')))
-  for(let e of text) {
-    if(e.match(/[-+v^r!act]/)&&e.length === 1){
-      let cur = PRECEDENCE[e],
+  for(let elem of text.split(/([-+v^r!act])/)){
+    console.log(elem)
+    if(elem === '') continue
+    if(elem.match(/[-+v^r!act]/) && elem.length === 1){
+      let cur = PRECEDENCE[elem],
           last = PRECEDENCE[operands[0]]
-      if(e === 'a'||e === 'c'){
-        operands[0] += e
+      if(elem === 'a'||elem === 'c'){
+        operands[0] += elem
       } else if(cur < last){
-        values.push(operands.shift())
-        operands.unshift(e)
+        yield operands.shift()
+        operands.unshift(elem)
       } else{
-        operands.unshift(e)
+        operands.unshift(elem)
       }
     } else {
-      values.push(e)
+      yield elem
     }
   }
-  values = values.concat(operands)
-
-  return values
+  while(operands.length){
+    yield operands.shift()
+  }
 }
 //Processes the RPN and returns an array of objects and values
-function _processDice(arry){
+function processDice(rollStr){
   let roll = {}, i = 0, temp = []
 
-  while(arry.length){
-    // console.log(arry[0],i,temp)
-    if(arry[0].match(/[v^r!tca+]/)||(arry[0] === '-' && arry[0].length === 1)){
-      if(i + 2 === temp.length||arry[0] === '+'||arry[0] === '-'){
-        temp.push(_processAdders(arry.shift(),temp.pop(),temp.pop()))
+  for(let elem of toPostFix(rollStr)){
+    if(elem.match(/[v^r!tca+]/)||(elem === '-' && elem.length === 1)){
+      if(i + 2 >= temp.length||elem === '+'||elem === '-'){
+        console.log('double pop')
+        temp.push(processAdders(elem,temp.pop(),temp.pop()))
         i = i >= temp.length ? i = temp.length - 1 : i
       } else {
-        temp[i] = _processAdders(arry.shift(),temp.pop(),temp[i]);
+        console.log('single pop')
+        temp[i] = processAdders(elem,temp.pop(),temp[i])
       }
     } else {
-      let t = _getDice(arry.shift());
-      temp.push(t);
+      let t = getDice(elem)
+      temp.push(t)
       if(Array.isArray(t)){
-        i = temp.length - 1;
+        i = temp.length - 1
       }
     }
+    console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    console.log(elem,i,[...temp])
+    console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
   }
   temp[0].forEach(function(e,i,a){
     if(typeof e === 'object'){
@@ -90,13 +94,13 @@ function _processDice(arry){
     }
   });
   if(!('Success' in roll)){
-    roll.Total = _getTotal(temp[0]);
+    roll.Total = getTotal(temp[0]);
   }
   return roll;
 }
 //Takes a string notation and converts *d* into array of dice or number into int
-function _getDice(note){
-  var num,sides,dice =[];
+function getDice(note){
+  var num,sides,dice =[],roll;
   if(/\d*d\d+/.test(note)){
     roll = note.split('d');
     num = isNaN(parseInt(roll[0]))?1:Math.abs(roll[0]);
@@ -117,11 +121,11 @@ function _getDice(note){
   while(dice.length < num){
     dice.push(new Die(note,sides));
   }
-  _rollDice(note,dice);
+  rollDice(note,dice);
   return dice;
 }
 //Rolls and array of dice and applies special rules if applicable
-function _rollDice(note,dice){
+function rollDice(note,dice){
   if(/\d*dF/.test(note)){
     var total = 0;
     dice.forEach(function(e){
@@ -142,25 +146,29 @@ function _rollDice(note,dice){
   return dice;
 }
 //Switch to handle how to process Roll notations
-function _processAdders(op,o1,o2){
+function processAdders(op,o1,o2){
+  console.log("*************************")
+  console.log(op,o1,o2)
   var newO;
   switch(op){
-    case 'r':  newO = _reRoll(o1,o2);break;
-    case '!':  newO = _explodeRoll(o1,o2);break;
-    case 'v':  newO = _dropLowest(o1,o2);break;
-    case '^':  newO = _dropHighest(o1,o2);break;
+    case 'r':  newO = reRoll(o1,o2);break;
+    case '!':  newO = explodeRoll(o1,o2);break;
+    case 'v':  newO = dropLowest(o1,o2);break;
+    case '^':  newO = dropHighest(o1,o2);break;
     case 't':
     case 'ta':
     case 'tc':
     case 'tac':
-    case 'tca':  newO = _countSuccess(op,o1,o2);break;
-    case '+':  newO = _addToRoll(o1,o2);break;
-    case '-':  newO = _convertToNeg(o1,o2);break;
+    case 'tca':  newO = countSuccess(op,o1,o2);break;
+    case '+':  newO = addToRoll(o1,o2);break;
+    case '-':  newO = convertToNeg(o1,o2);break;
   }
+  console.log(newO)
+  console.log("*************************")
   return newO;
 }
 //Function to re-roll dice based on a target number or lower, will use 1 if no number is given
-function _reRoll(limit,dice){
+function reRoll(limit,dice){
   limit = isNaN(limit)?1:limit;
   var cnt = 0, size;
   while(true){
@@ -177,8 +185,8 @@ function _reRoll(limit,dice){
     }
     if(dice[cnt].value <= limit){
       var tmp = new Die(dice[cnt].note,size);
-      tmp.roll();
-      dice[cnt].inValid('r');
+      tmp.roll
+      dice[cnt].inValid = 'r'
       dice.splice(cnt+1,0,tmp);
     }
     cnt++;
@@ -186,7 +194,7 @@ function _reRoll(limit,dice){
   return dice;
 }
 //Function to explode(add more die of same type) roll based on target number or higher, will use die size - 1 if no number given
-function _explodeRoll(limit,dice){
+function explodeRoll(limit,dice){
   limit = isNaN(limit)?-1:limit;
   var cnt = 0, size, bns;
   while(true){
@@ -205,7 +213,7 @@ function _explodeRoll(limit,dice){
     if(!isNaN(dice[cnt].value)){
       if(dice[cnt].value >= bns){
         var tmp = new Die(dice[cnt].note,size);
-        tmp.roll();
+        tmp.roll
         dice.splice(cnt+1,0,tmp);
       }
     }
@@ -214,7 +222,7 @@ function _explodeRoll(limit,dice){
   return dice;
 }
 //Function to drop lowest [number] of rolls out of the pool. Will only drop one if no number given
-function _dropLowest(cnt,dice){
+function dropLowest(cnt,dice){
   cnt =  isNaN(cnt)?-1:cnt;
   var i, j, low, pos, pop, tote, actv = [];
   dice.forEach(function(e,i){
@@ -240,13 +248,13 @@ function _dropLowest(cnt,dice){
         pop = i;
       }
     }
-    dice[pos].inValid('dl');
+    dice[pos].inValid = 'dl'
     actv.splice(pop,1);
   }
   return dice;
 }
 //Function to drop highest [number] of rolls out of the pool. Will only drop one if no number given
-function _dropHighest(cnt,dice){
+function dropHighest(cnt,dice){
   cnt =  isNaN(cnt)?-1:cnt;
   var i, j, hgh, pos, pop, tote, actv = [];
   dice.forEach(function(e,i){
@@ -272,13 +280,13 @@ function _dropHighest(cnt,dice){
         pop = i;
       }
     }
-    dice[pos].inValid('dh');
+    dice[pos].inValid = 'dh'
     actv.splice(pop,1);
   }
   return dice;
 }
 //Function to switch to Success based rolling. Modifiers can be added to include botch(1 subtracts) or bonus(max value adds 1).
-function _countSuccess(op,trgt,dice){
+function countSuccess(op,trgt,dice){
   var success = 0,
     botch = op.match(/c/)?true:false,
     bonus = op.match(/a/)?true:false;
@@ -302,11 +310,11 @@ function _countSuccess(op,trgt,dice){
   return dice;
 }
 //Function to combine polls together. Will just append single value to array
-function _addToRoll(adder,roll){
+function addToRoll(adder,roll){
   return [].concat.apply([],[roll,adder]);
 }
 //Function to convert values to negative for subtraction
-function _convertToNeg(roll,adder){
+function convertToNeg(roll,adder){
   console.log(roll,adder)
   if(typeof roll === 'object'){
     roll.forEach(function(e){
@@ -320,10 +328,10 @@ function _convertToNeg(roll,adder){
       }
     });
   }
-  return _addToRoll(roll,adder);
+  return addToRoll(roll,adder);
 }
 //Function to total rolls value if not success based
-function _getTotal(dice){
+function getTotal(dice){
   var total = 0;
   dice.forEach(function(e,i,a){
     if(typeof e.value === 'number'){
