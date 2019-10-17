@@ -30,7 +30,7 @@
           "<li>eg. <b>4d6</b> will roll 4 6-sided dice and <b>d6</b> will roll just 1.</li>",
           "<li><i>Precentile dice</i> - <b>d%</b> - Rolls 2d10 dice converting them to values between 1 and 100</li>",
           "<li><i>Fate/Fudge dice</i> - <b>NdF</b> - Rolls dice for the Fate system (-1, 0 or +1)</li>",
-          "<li><i>Feng Shui shorthand</i> - <b>dFS</b> - same as d6!-d6!</li>",
+          // "<li><i>Feng Shui shorthand</i> - <b>dFS</b> - same as d6!-d6!</li>",
           "<li>Roll modifiers only effect the die type they follow unless parentheses are used.</li>",
           "<li><i>Drop Dice</i> - <b>v[Number]</b> - Drops the lowest \"number\" of dice in a roll.</li>",
           "<li><i>Keep Dice</i> - <b>^[Number]</b> - Keeps the lowest \"number\" of dice in a roll.</li>",

@@ -18,10 +18,6 @@ export default class Die{
   get value() {
     return dice.get(this).value
   }
-  get roll() {
-    roll(this)
-    return dice.get(this).value
-  }
   set value(value) {
     dice.get(this).value = value
   }
