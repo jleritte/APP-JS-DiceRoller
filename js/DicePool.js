@@ -65,31 +65,31 @@ function processDice(rollStr){
   }
   temp = temp[0]
 
-  let roll = temp.reduce((e,i,a){
-    if(typeof e === 'object'){
-      let temp = e.note;
-      if(temp in roll){
-        roll[temp].push(e)
+  return temp.reduce((acc,cur,i,array) => {
+    if(typeof cur === 'object'){
+      let temp = cur.note;
+      if(temp in acc){
+        acc[temp].push(cur)
       } else {
-        roll[temp] = [e]
+        acc[temp] = [cur]
       }
-    } else if(typeof e === 'number'){
-      a[i] = new Die('+',0)
-      a[i].value = e
-      e = a[i];
-      if('+' in roll){
-        roll['+'].push(e)
+    } else if(typeof cur === 'number'){
+      array[i] = new Die('+',0)
+      array[i].value = cur
+      cur = array[i]
+      if('+' in acc){
+        acc['+'].push(cur)
       } else {
-        roll['+'] = [e]
+        acc['+'] = [cur]
       }
     } else {
-      roll.Success = e.replace(/[sb]/g,'')
+      acc.Success = cur.replace(/[sb]/g,'')
     }
-  })
-  if(!('Success' in roll)){
-    roll.Total = getTotal(temp)
-  }
-  return roll
+    if(i+1 === array.length && !('Success' in acc)) {
+      acc.Total = getTotal(array)
+    }
+    return acc
+  },{})
 }
 //Takes a string notation and converts *d* into array of dice or number into int
 function getDice(note){
