@@ -3,21 +3,13 @@ let  dice = {}, _text
 
 export default class DicePool {
   constructor(text) {
-    dice = parseText(text)
+    dice = processDice(text)
     _text = text
   }
   get pool() {
     dice.text = _text
     return dice
   }
-}
-
-function parseText(roll){
-  // if(roll.match('dFS')){
-  //   roll = roll.replace('dFS','d6!-d6!')
-  // }
-
-  return processDice(roll)
 }
 
 //Converts the String to a Postfix(RPN) array for processing
@@ -53,7 +45,7 @@ function* toPostFix(text){
 }
 //Processes the RPN and returns an array of objects and values
 function processDice(rollStr){
-  let roll = {}, i = 0, temp = []
+  let i = 0, temp = []
 
   for(let elem of toPostFix(rollStr)){
     if(elem.match(/[v^r!tca+-]/)){
@@ -71,8 +63,9 @@ function processDice(rollStr){
       }
     }
   }
+  temp = temp[0]
 
-  temp[0].forEach(function(e,i,a){
+  let roll = temp.reduce((e,i,a){
     if(typeof e === 'object'){
       let temp = e.note;
       if(temp in roll){
@@ -94,13 +87,13 @@ function processDice(rollStr){
     }
   })
   if(!('Success' in roll)){
-    roll.Total = getTotal(temp[0])
+    roll.Total = getTotal(temp)
   }
   return roll
 }
 //Takes a string notation and converts *d* into array of dice or number into int
 function getDice(note){
-  let num,sides,dice,roll
+  let num,sides,dice,roll,fudge = false
   if(/\d*d\d+/.test(note)){
     roll = note.split('d')
     num = isNaN(parseInt(roll[0])) ? 1 : Math.abs(roll[0])
@@ -111,6 +104,7 @@ function getDice(note){
     sides = 10
   }
   else if(/\d*dF/.test(note)){
+    fudge = true
     roll = note.split('d')
     num = isNaN(parseInt(roll[0])) ? 1 : Math.abs(roll[0])
     sides = 6
@@ -119,29 +113,23 @@ function getDice(note){
     return parseInt(note)
   }
   dice = new Array(num).fill(0).map(_ => new Die(note,sides))
-  rollDice(note,dice)
+  if(fudge) convertToFudge(note,dice)
   return dice
 }
-//Rolls and array of dice and applies special rules if applicable
-function rollDice(note,dice){
-  if(/\d*dF/.test(note)){
-    let total = 0
-    dice.forEach(function(e){
-      let tmp = e.value
-      if(tmp === 2||tmp === 3){
-        e.value = -1
-      }
-      else if(tmp === 4||tmp === 6){
-        e.value = 0
-      }
-      else if(tmp === 1||tmp === 5){
-        e.value = 1
-      }
-      total += e.value
-    })
-    dice = total
-  }
-  return dice
+//Converts dice to Fudge/Fate dice
+function convertToFudge(note,dice){
+  return dice.map(e => {
+    let tmp = e.value
+    if(tmp === 2||tmp === 3){
+      e.value = -1
+    }
+    else if(tmp === 4||tmp === 6){
+      e.value = 0
+    }
+    else if(tmp === 1||tmp === 5){
+      e.value = 1
+    }
+  })
 }
 //Switch to handle how to process Roll notations
 function operate(op,o1,o2){
@@ -163,145 +151,124 @@ function operate(op,o1,o2){
 function reRoll(limit,dice){
   limit = isNaN(limit) ? 1 : limit
   let cnt = 0, size
-  while(true){
-    if(typeof dice[cnt] !== 'object' && dice[cnt] !== undefined){
-      cnt++
+  while(cnt < dice.length){
+    let die = dice[cnt++]
+    if(die && typeof die !== 'object'){
       continue
     }
-    if(cnt >= dice.length){
-      break
-    }
-    size = dice[cnt].size
+    size = die.size
     if(limit === size){
       continue
     }
-    if(dice[cnt].value <= limit){
-      var tmp = new Die(dice[cnt].note,size)
-      dice[cnt].inValid = 'r'
-      dice.splice(cnt+1,0,tmp)
+    if(die.value <= limit){
+      let tmp = new Die(die.note,size)
+      die.inValid = 'r'
+      dice.push(tmp)
     }
-    cnt++
   }
   return dice
 }
 //Function to explode(add more die of same type) roll based on target number or higher, will use die size - 1 if no number given
 function explodeRoll(limit,dice){
-  limit = isNaN(limit)?-1:limit;
-  var cnt = 0, size, bns;
-  while(true){
-    if(typeof dice[cnt] !== 'object' && dice[cnt] !== undefined){
-      cnt++;
-      continue;
-    }
-    if(cnt >= dice.length){
-      break;
-    }
+  limit = isNaN(limit) ? -1 : limit
+  let cnt = 0, size, bns
+  while(cnt < dice.length){
+    let die = dice[cnt++]
     if(limit === 1){
-      break;
+      break
     }
-    size = dice[cnt].size;
-    bns = limit === -1?size:limit;
-    if(!isNaN(dice[cnt].value)){
-      if(dice[cnt].value >= bns){
-        var tmp = new Die(dice[cnt].note,size)
-        dice.splice(cnt+1,0,tmp);
+    if(die && typeof die !== 'object'){
+      continue
+    }
+    size = die.size
+    bns = limit === -1 ? size : limit
+    if(!isNaN(die.value)){
+      if(die.value >= bns){
+        let tmp = new Die(die.note,size)
+        dice.push(tmp)
       }
     }
-    cnt++;
   }
-  return dice;
+  return dice
 }
 //Function to drop lowest [number] of rolls out of the pool. Will only drop one if no number given
 function dropLowest(cnt,dice){
-  cnt =  isNaN(cnt)?-1:cnt;
-  var i, j, low, pos, pop, tote, actv = [];
-  dice.forEach(function(e,i){
+  cnt =  isNaN(cnt) ? 1 : cnt
+  let low, pos, pop, actv = dice.map((e,i) => {
     if(!isNaN(e.value)){
-      actv.push(i);
+      return i
     }
-  });
+  }).filter(_ => _ !== undefined)
   if(!actv.length){
-    return dice;
+    return dice
   }
-  tote = cnt === -1?1:cnt;
-  for(j = 0; j < tote;j++){
-    if(tote < 0){
-      break;
-    }
-    low = dice[actv[0]].value;
-    pos = actv[0];
-    pop = 0;
-    for(i = 0; i < actv.length;i++){
+  for(let j = 0; j < cnt;j++){
+    low = dice[actv[0]].value
+    pos = actv[0]
+    pop = 0
+    for(let i = 1; i < actv.length;i++){
       if(dice[actv[i]].value < low){
-        low = dice[actv[i]].value;
-        pos = actv[i];
-        pop = i;
+        low = dice[actv[i]].value
+        pos = actv[i]
+        pop = i
       }
     }
     dice[pos].inValid = 'dl'
-    actv.splice(pop,1);
+    actv.splice(pop,1)
   }
-  return dice;
+  return dice
 }
 //Function to drop highest [number] of rolls out of the pool. Will only drop one if no number given
 function dropHighest(cnt,dice){
-  cnt =  isNaN(cnt)?-1:cnt;
-  var i, j, hgh, pos, pop, tote, actv = [];
-  dice.forEach(function(e,i){
+  cnt =  isNaN(cnt) ? 1 : cnt
+  let hgh, pos, pop, actv = dice.map(function(e,i){
     if(!isNaN(e.value)){
-      actv.push(i);
+      return i
     }
-  });
+  }).filter(_ => _ !== undefined)
   if(!actv.length){
-    return dice;
+    return dice
   }
-  tote = cnt === -1?1:cnt;
-  for(j = 0; j < tote;j++){
-    if(tote < 0){
-      break;
-    }
-    hgh = dice[actv[0]].value;
-    pos = actv[0];
-    pop = 0;
-    for(i = 0;i < actv.length;i++){
+  for(let j = 0; j < cnt;j++){
+    hgh = dice[actv[0]].value
+    pos = actv[0]
+    pop = 0
+    for(let i = 0;i < actv.length;i++){
       if(dice[actv[i]].value > hgh){
-        hgh = dice[actv[i]].value;
-        pos = actv[i];
-        pop = i;
+        hgh = dice[actv[i]].value
+        pos = actv[i]
+        pop = i
       }
     }
     dice[pos].inValid = 'dh'
-    actv.splice(pop,1);
+    actv.splice(pop,1)
   }
-  return dice;
+  return dice
 }
 //Function to switch to Success based rolling. Modifiers can be added to include botch(1 subtracts) or bonus(max value adds 1).
 function countSuccess(op,trgt,dice){
-  var success = 0,
-    botch = op.match(/c/)?true:false,
-    bonus = op.match(/a/)?true:false;
-  dice.forEach(function(e){
-    var t = isNaN(trgt)?-1:trgt;
-    if(t === -1){
-      t = e.size;
-    }
+  let success = 0,
+    botch = /c/.test(op),
+    bonus = /a/.test(op)
+  dice.forEach(e => {
+    let t = isNaN(trgt) ? e.size : trgt
     if(e.value >= t){
-      success++;
+      success++
       if(e.value === e.size && bonus){
-        success++;
+        success++
       }
     }
     if(e.value === 1 && botch){
-      success--;
+      success--
     }
-  });
-  success = success < 0?'b'+success:success;
-  dice.push('s'+success);
-  return dice;
+  })
+  success = success < 0 ? `b${success}` : success
+  dice.push(`s${success}`)
+  return dice
 }
 //Function to combine polls together. Will just append single value to array
 function addToRoll(adder,roll){
-  return [].concat.apply([],[roll,adder]);
+  return [].concat.apply([],[roll,adder])
 }
 //Function to convert values to negative for subtraction
 function convertToNeg(roll,adder){
@@ -309,24 +276,18 @@ function convertToNeg(roll,adder){
   if(typeof roll === 'object'){
     roll.forEach(function(e){
       if(typeof e !== 'object'){
-        return;
+        return
       }
       if(e.note.match(/-/)){
         if(e.value > 0){
-          e.value = e.value*-1;
+          e.value = e.value*-1
         }
       }
-    });
+    })
   }
-  return addToRoll(roll,adder);
+  return addToRoll(roll,adder)
 }
 //Function to total rolls value if not success based
 function getTotal(dice){
-  var total = 0;
-  dice.forEach(function(e,i,a){
-    if(typeof e.value === 'number'){
-      total += e.value;
-    }
-  });
-  return total;
+  return dice.reduce((a,{value}) => a + (typeof value === 'number' ? value : 0),0)
 }
