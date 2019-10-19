@@ -150,13 +150,11 @@ function operate(op,o1,o2){
 //Function to re-roll dice based on a target number or lower, will use 1 if no number is given
 function reRoll(limit,dice){
   limit = isNaN(limit) ? 1 : limit
-  let cnt = 0, size
-  while(cnt < dice.length){
-    let die = dice[cnt++]
+  for(let die of dice){
     if(die && typeof die !== 'object'){
       continue
     }
-    size = die.size
+    let size = die.size
     if(limit === size){
       continue
     }
@@ -171,17 +169,15 @@ function reRoll(limit,dice){
 //Function to explode(add more die of same type) roll based on target number or higher, will use die size - 1 if no number given
 function explodeRoll(limit,dice){
   limit = isNaN(limit) ? -1 : limit
-  let cnt = 0, size, bns
-  while(cnt < dice.length){
-    let die = dice[cnt++]
+  for(let die of dice) {
     if(limit === 1){
       break
     }
     if(die && typeof die !== 'object'){
       continue
     }
-    size = die.size
-    bns = limit === -1 ? size : limit
+    let size = die.size,
+      bns = limit === -1 ? size : limit
     if(!isNaN(die.value)){
       if(die.value >= bns){
         let tmp = new Die(die.note,size)

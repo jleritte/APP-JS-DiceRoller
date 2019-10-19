@@ -1,6 +1,8 @@
+import { DOM } from './Utils.js'
+
+const $$ = new DOM()
 //HTML Templates in string format
-{
-  "game": ["<div class=\"contain\">",
+let uiContent = ["<div class=\"contain\">",
     "<div id=\"roll\" class=\"tab\">",
     "<a href=\"#roll\">Roller</a>",
   "<div class=\"roller content\">",
@@ -22,8 +24,8 @@
     "<p>Press F1 to toggle Help</p>",
   "</div>",
 "</div>"],
-  "save": ["<li><span class=\"delete\">X</span><span></span></li>"],
-  "help": ["<div class=\"helpBlur\">",
+  saveContent = ["<li><span class=\"delete\">X</span><span></span></li>"],
+  helpContent = ["<div class=\"helpBlur\">",
       "<div class='helpContain'>",
         "<ul>",
           "<li>Standard Notation is <b>NdX</b>. It can be chained <b>NdX+NdX</b>. Empty <b>N</b> will counts as an 1.</li>",
@@ -37,11 +39,27 @@
           "<li><i>Reroll Dice</i> - <b>r[Number]</b> - Rerolls any dice that come up equal to or lower than \"number.\"</li>",
           "<li><i>Exploding</i> - <b>![Number]</b> - Adds an extra dice every time a die comes up as the \"number\" or higher.</li>",
           "<li><i>Success-Counting</i> - <b>t[Number]</b> - Counts as successes the number of dice that land equal to or higher than \"number.\"</li>",
-          "<li><ul>",
+          "<ul>",
             "<li><i>  Success-Canceling</i> - <b>c</b> - Cancels out a success every time a die lands on \"1\" (the minimum).</li>",
             "<li><i>  Bonus Successes</i> - <b>a</b> - Adds a success every time a die lands on the maximum for that dice type.</li>",
           "</ul>",
-        "</ul></li>",
+        "</ul>",
       "</div>",
     "</div>"]
+
+export function ui(parent) {
+  if(!parent) return
+  let uiele = $$.create(uiContent.join(''))
+  parent.add(uiele)
+  if(parent.elements === document.body) {
+    $$.query('title').text('Dice Roller')
+  }
+}
+
+
+let helpVisable = 0, helpele = $$.create(helpContent.join(''))
+export function help(parent) {
+  if(!parent) return
+  helpVisable = !helpVisable
+  helpVisable ? parent.add(helpele) : parent.remove(helpele)
 }
