@@ -1,7 +1,6 @@
-console.log("UTILS LOADED")
 // DOM FUNCTIONS
 let proto
-export class DOM {
+class DOM {
   constructor() {
     console.log('DOM FUNCTIONS INIT')
     proto = Object.getPrototypeOf(this)
@@ -34,10 +33,9 @@ export class DOM {
   create(content) {
     let node = document.createElement('div')
     node.innerHTML = content
-    return copyProto({elements: document.importNode(node,true)})
+    return copyProto({elements: document.importNode(node.firstElementChild,true)})
   }
   css(url) {
-    console.log(url)
     let link = document.createElement('link'),
       after = document.querySelector('title')
     link.rel = 'stylesheet'
@@ -45,8 +43,18 @@ export class DOM {
     link.href = url
     after.parentNode.insertBefore(link,after)
   }
+  icon() {
+    let link = document.createElement('link'),
+      after = document.querySelector('title')
+    link.rel = 'icon'
+    link.type = 'image/x-icon'
+    link.href = './img/favicon.ico'
+    after.parentNode.insertBefore(link,after)
+  }
 }
 
 function copyProto(newOb) {
   return Object.setPrototypeOf(newOb,proto)
 }
+
+export let $$ = new DOM()

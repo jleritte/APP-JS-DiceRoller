@@ -2,10 +2,8 @@
 // python -m http.server 9001
 
 import DicePool from './DicePool.js'
-import {ui,help} from './templates.js'
-import {DOM}from './Utils.js'
-
-const $$ = new DOM()
+import {ui,help,save} from './templates.js'
+import {$$}from './DOM.js'
 
 window.addEventListener('keyup',e => {
   if(e.which === 13) {
@@ -19,11 +17,12 @@ class Roller {
     let parent = $$.query('.rollContain')
     parent = parent.elements ? parent : $$.query('body')
     ui(parent)
-    $$.css('css/roller.css')
+    parent.add(save())
+    // $$.css('css/roller.css')
   }
 }
 
-new Roller('body')
+new Roller()
 /*
 // Working on turning into modules and will Reactify it ultimately
 function Roller(){
@@ -51,48 +50,6 @@ function Roller(){
     function fillI(e) {
       utils.fillInput(e.target);
     }
-  }
-//Function to load the CSS
-  function loadStyles(url){
-    var link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.type = 'text/css';
-    link.href = url;
-    var entry = document.getElementsByTagName('title')[0];
-    entry.parentNode.insertBefore(link, entry);
-  }
-//Builds the pieces of the GUI and determines if the widget lives on the page by itself
-  function buildGUI(where){
-    where = !where?'body':'.'+where;
-    if(where === 'body'){
-      document.querySelector('title').innerHTML = 'Dice Roller';
-      loadFavicon();
-    }
-    where = document.querySelector(where);
-    loadTemplate(where);
-    connectKey();
-  }
-//Loads the templates needed
-  function loadTemplate(where){
-    var templates = require('./templates'),
-        keys = Object.keys(templates);
-
-    keys.forEach(function(elem){
-      var template = document.createElement('template');
-
-      template.innerHTML = templates[elem].join("\n");
-      if(elem === "game") {
-        where.appendChild(document.importNode(template.content,true));
-      } else {
-        template.className = elem;
-        where.appendChild(template);
-      }
-    });
-    document.querySelector('input').addEventListener('focus',function(e){
-      e.target.select();
-    });
-    connectButton(document.querySelector('.save'));
-    fillSaved();
   }
 //Adds the event listeners for different key strokes
   function connectKey(){
@@ -142,15 +99,6 @@ function Roller(){
       contain.removeChild(contain.lastElementChild);
     }
   }
-//Adds the Fovicon to the page if widget lives in the body
-  function loadFavicon(){
-    var icon = document.createElement('link');
-    icon.rel = 'icon';
-    icon.type = 'image/x-icon';
-    icon.href = './img/favicon.ico';
-    var entry = document.getElementsByTagName('title')[0];
-    entry.parentNode.insertBefore(icon, entry);
-  }
 //Public functions
   Object.defineProperties(this,{
     'init': {
@@ -159,28 +107,13 @@ function Roller(){
     }
   });
 }
-
-
-
-//Initalizer used to start the widget building process
-function _init(where){
-  this.loadStyles('css/roller.css');
-  window.location.hash = 'roll';
-  this.buildGUI(where);
-}
-
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // OLD UTILS CODE
-/*import DicePool from './DicePool.js'
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 const ERROR = `Check Input`
 let saved = localStorage.savedRolls ? JSON.parse(localStorage.savedRolls) : {}
 
-export default class utils {
-  constructor() {
-    console.log(`Utils Initialized`)
-  }
-}
 
 //Function that validates the text
 function validateText(text){
@@ -209,52 +142,6 @@ function getResult(){
     document.querySelector('.result').textContent = ERROR
   }
 }
-
-
-
-//This is a object to hold util functions
-// function utils(){
-//   var _private = {
-//     'error': 'Check Input',
-//     'saved': localStorage.savedRolls ? JSON.parse(localStorage.savedRolls): {},
-//     'validateText': validateText,
-//     'getResult': _getResult
-//   };
-
-
-// //Public functions
-//   Object.defineProperties(this,{
-//     private: _private,
-//     'getResult': {
-//       value: _getResult.bind(_private),
-//       emunerable: true
-//     },
-//     'clearResult': {
-//       value: _clearResult.bind(_private),
-//       emunerable: true
-//     },
-//     'saveRoll': {
-//       value: _saveRoll.bind(_private),
-//       emunerable: true
-//     },
-//     'deleteRoll': {
-//       value: _deleteRoll.bind(_private),
-//       emunerable: true
-//     },
-//     'formatResult': {
-//       value: _formatResult.bind(_private),
-//       emunerable: true
-//     },
-//     'validateText': {
-//       value: validateText.bind(_private),
-//       emunerable: true
-//     },
-//     'fillInput': {
-//       value: _fillInput.bind(_private),
-//       emunerable: true
-//     }
-//   });
-// }
 
 //Function to clear the result contents
 function _clearResult(){

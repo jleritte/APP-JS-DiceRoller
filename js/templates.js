@@ -1,6 +1,5 @@
-import { DOM } from './Utils.js'
+import {$$} from './DOM.js'
 
-const $$ = new DOM()
 //HTML Templates in string format
 let uiContent = ["<div class=\"contain\">",
     "<div id=\"roll\" class=\"tab\">",
@@ -23,8 +22,8 @@ let uiContent = ["<div class=\"contain\">",
     "<p>Type Roll below - Hit Enter to roll</p>",
     "<p>Press F1 to toggle Help</p>",
   "</div>",
-"</div>"],
-  saveContent = ["<li><span class=\"delete\">X</span><span></span></li>"],
+"</div>"].join(''),
+  saveContent = ["<li><span class=\"delete\">X</span><span></span></li>"].join(''),
   helpContent = ["<div class=\"helpBlur\">",
       "<div class='helpContain'>",
         "<ul>",
@@ -45,19 +44,24 @@ let uiContent = ["<div class=\"contain\">",
           "</ul>",
         "</ul>",
       "</div>",
-    "</div>"]
+    "</div>"].join('')
 
+// Functions to convert Templates HTML
 export function ui(parent) {
   if(!parent) return
-  let uiele = $$.create(uiContent.join(''))
+  let uiele = $$.create(uiContent)
   parent.add(uiele)
   if(parent.elements === document.body) {
     $$.query('title').text('Dice Roller')
+    $$.icon()
   }
 }
 
+export function save() {
+  return $$.create(saveContent)
+}
 
-let helpVisable = 0, helpele = $$.create(helpContent.join(''))
+let helpVisable = 0, helpele = $$.create(helpContent)
 export function help(parent) {
   if(!parent) return
   helpVisable = !helpVisable
