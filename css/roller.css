@@ -1,11 +1,9 @@
-DIV, BODY, HTML, SPAN, TD{
+* {
   margin:0;
   padding:0;
   border:0;
-  vertical-align:baseline;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
-  font-family: Tahoma, sans-serif;
+  font-family: sans-serif;
 }
 UL{
   list-style-type:none;
@@ -15,58 +13,27 @@ LI > UL{
   padding-left: 25px;
 }
 .contain{
-  height: 467px;
-  max-width: 731px;
-  padding-top: 20px;
-  overflow: hidden;
-  display: flex;
-  justify-content: space-between;
-}
-.tab {
-  height: 0%;
-}
-.tab > a{
-  background: #DDD;
-  margin-right: 2px;
-  line-height: 20px;
-  text-decoration: none;
-  padding: 10px 15px;
-  border-radius: 4px 4px 0px 0px;
-  color: #2c3e50;
-}
-.tab:target > a{
-  color: #000;
-  cursor: default;
-  background-color: #FFF;
-  border: 1px solid #999;
-  border-bottom-color: transparent;
-  position: relative;
-  z-index: 1;
-}
-.tab:target .content{
-  z-index: 0;
+  display: grid;
+  height: 100%;
+  width: 100%;
+  grid-template-columns: repeat(3,1fr);
+  grid-template-rows: 50px repeat(3,1fr);
 }
 .roller, .list{
+  grid-area: 2/1/span 3/span 3;
   left: 0;
-  position: absolute;
   background: #FFF;
-  width: 100%;
-  max-width: 731px;
-  min-height: 418px;
   border-top: 1px solid #999;
   border-bottom: 1px solid #999;
   padding: 10px;
-  z-index: -2;
-  top: 50px;
   display: flex;
   flex-wrap: wrap;
 }
 .usage{
-  width: 100%;
-  height: 0%;
   text-align: center;
-  margin: -15px 0;
   pointer-events: none;
+  grid-area: 1 / 1 / 1 / span 3;
+  padding-top: 7px;
 }
 .usage P{
   margin: 0;
@@ -84,7 +51,6 @@ LI > UL{
   width: 100%;
   height:100%;
   overflow-y:auto;
-  min-height: 300px;
 }
 .list LI{
   margin:2px 0;
@@ -99,8 +65,6 @@ LI > UL{
   cursor:default;
 }
 .listCont{
-  width:100%;
-  height:396px;
   background:#eee;
   overflow-y:auto;
   overflow-x:hidden;
@@ -113,7 +77,7 @@ LI > UL{
   width: 100%;
   padding-left: 5px;
 }
-SPAN.delete{
+.delete{
   color:#eee;
   margin-right:4px;
   height: 16px;
@@ -122,35 +86,35 @@ SPAN.delete{
   font-size:14px;
   order: 2;
 }
-SPAN.delete:hover{
+.delete:hover{
   background:#999;
   color:#555;
   cursor:default;
   border-radius:50%;
 }
-SPAN.disabled{
+.disabled{
   color:#f22;
 }
-SPAN.max{
+.max{
   color:#2f2;
 }
-DIV.helpBlur{
-  max-width: 731px;
-  min-height:467px;
+.helpBlur{
   background:rgba(0,0,0,0.8);
-  top:0;
-  left:0;
-  position:fixed;
-  z-index:1000;
   display: flex;
   justify-content: center;
+  grid-area: 1/1/span 4/span 3;
 }
-DIV.helpContain{
+.helpContain{
   background:#fff;
   align-self: center;
-  padding: 0 8px;
+  padding: 8px;
   max-width: 90%;
   border-radius: 5px;
+}
+.helpBlur.small .helpContain{
+  overflow-y: scroll;
+  border-radius: 0;
+  align-self: initial;
 }
 .helpContain LI{
   margin-bottom: 2px;

@@ -5,24 +5,22 @@ import DicePool from './DicePool.js'
 import {ui,help,save} from './templates.js'
 import {$$}from './DOM.js'
 
-window.addEventListener('keyup',e => {
-  if(e.which === 13) {
-    console.log('enter hit')
-    help($$.query('body'))
-  }
-})
-
+let parent = $$.query('.rollContain').elements ? $$.query('.rollContain') : $$.query('body')
 class Roller {
   constructor() {
-    let parent = $$.query('.rollContain')
-    parent = parent.elements ? parent : $$.query('body')
     ui(parent)
     parent.add(save())
-    // $$.css('css/roller.css')
+    $$.css('css/roller.css')
   }
 }
 
 new Roller()
+window.addEventListener('keyup',e => {
+  if(e.which === 13) {
+    console.log('enter hit')
+    help($$.query('.contain'))
+  }
+})
 /*
 // Working on turning into modules and will Reactify it ultimately
 function Roller(){
@@ -85,19 +83,6 @@ function Roller(){
 //adds the event listener for the save button
   function connectButton(butt){
     butt.addEventListener('click', function(){utils.saveRoll();});
-  }
-//Function that shows and removes the help screen
-  function toggleHelp(){
-    var contain = document.querySelector('.contain');
-    if(document.querySelectorAll('.help').length === 1){
-      var help = document.importNode(document.querySelector('template.help').content,true);
-      contain.appendChild(help);
-      help = document.querySelector('.helpBlur');
-      help.className = 'helpBlur help';
-    }
-    else{
-      contain.removeChild(contain.lastElementChild);
-    }
   }
 //Public functions
   Object.defineProperties(this,{

@@ -2,21 +2,15 @@ import {$$} from './DOM.js'
 
 //HTML Templates in string format
 let uiContent = ["<div class=\"contain\">",
-    "<div id=\"roll\" class=\"tab\">",
-    "<a href=\"#roll\">Roller</a>",
   "<div class=\"roller content\">",
     "<input class=\"roll\" type=\"text\" value=\"d%+4dF+5d8+4-2+6d12r3v2^4!6\"></input>",
     "<input class=\"save\" type=\"button\" value=\"Save\"></input>",
     "<div class=\"result\"></div>",
   "</div>",
-  "</div>",
-    "<div id=\"save\" class=\"tab\">",
-    "<a href=\"#save\">Saves</a>",
   "<div class=\"list content\">",
     "<div class=\"listCont\">",
       "<ul class=\"saved\"></ul>",
     "</div>",
-  "</div>",
   "</div>",
   "<div class=\"usage\">",
     "<p>Type Roll below - Hit Enter to roll</p>",
@@ -38,10 +32,10 @@ let uiContent = ["<div class=\"contain\">",
           "<li><i>Reroll Dice</i> - <b>r[Number]</b> - Rerolls any dice that come up equal to or lower than \"number.\"</li>",
           "<li><i>Exploding</i> - <b>![Number]</b> - Adds an extra dice every time a die comes up as the \"number\" or higher.</li>",
           "<li><i>Success-Counting</i> - <b>t[Number]</b> - Counts as successes the number of dice that land equal to or higher than \"number.\"</li>",
-          "<ul>",
+          "<li><ul>",
             "<li><i>  Success-Canceling</i> - <b>c</b> - Cancels out a success every time a die lands on \"1\" (the minimum).</li>",
             "<li><i>  Bonus Successes</i> - <b>a</b> - Adds a success every time a die lands on the maximum for that dice type.</li>",
-          "</ul>",
+          "</ul></li>",
         "</ul>",
       "</div>",
     "</div>"].join('')
@@ -51,10 +45,10 @@ export function ui(parent) {
   if(!parent) return
   let uiele = $$.create(uiContent)
   parent.add(uiele)
-  if(parent.elements === document.body) {
-    $$.query('title').text('Dice Roller')
-    $$.icon()
-  }
+  // if(parent.elements === document.body) {
+  //   $$.query('title').text('Dice Roller')
+  //   $$.icon()
+  // }
 }
 
 export function save() {
@@ -64,6 +58,9 @@ export function save() {
 let helpVisable = 0, helpele = $$.create(helpContent)
 export function help(parent) {
   if(!parent) return
+  console.log(parent.elements,helpele.elements)
+  if(parent.elements.clientHeight < 100)
+    console.log("tacos")
   helpVisable = !helpVisable
   helpVisable ? parent.add(helpele) : parent.remove(helpele)
 }
