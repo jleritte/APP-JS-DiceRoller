@@ -12,32 +12,46 @@ UL{
 LI > UL{
   padding-left: 25px;
 }
+/* Default styles */
 .contain{
   display: grid;
-  height: 100%;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
   grid-template-columns: repeat(3,1fr);
-  grid-template-rows: 50px repeat(3,1fr);
+  grid-template-rows: auto repeat(3,1fr);
+  overflow: hidden;
 }
-.roller, .list{
-  grid-area: 2/1/span 3/span 3;
-  left: 0;
+.content{
   background: #FFF;
-  border-top: 1px solid #999;
-  border-bottom: 1px solid #999;
+  border-top: 1px solid;
+  border-bottom: 1px solid;
   padding: 10px;
-  display: flex;
-  flex-wrap: wrap;
+  position: relative;
+}
+.roller {
+  grid-area: 2/1/5/3;
+  display: grid;
+}
+.list {
+  grid-area: 2/3/5/4;
+  border-left: 1px solid;
+}
+.tab {
+  width: 100%;
+  background: blue;
 }
 .usage{
   text-align: center;
   pointer-events: none;
   grid-area: 1 / 1 / 1 / span 3;
-  padding-top: 7px;
+  margin: 10px 0;
 }
 .usage P{
   margin: 0;
 }
+
+
+
 .roll{
   width: 83%;
 }
@@ -69,6 +83,11 @@ LI > UL{
   overflow-y:auto;
   overflow-x:hidden;
   padding: 0 2px;
+  width: 100%;
+  height: calc(100% - 20px);
+}
+.rollContain .listCont{
+  height: 100%;
 }
 .saved{
   margin: 0;
@@ -118,4 +137,32 @@ LI > UL{
 }
 .helpContain LI{
   margin-bottom: 2px;
+}
+
+/* widget Styles */
+.rollContain .contain {
+  height: 100%;
+  width: 100%;
+}
+.rollContain .content {
+  grid-area: 2/1/span 3/span 3;
+}
+.rollContain .list {
+  border-left: none;
+}
+.rollContain .content:focus {
+  z-index: 1;
+}
+.rollContain .tab {
+  background: #ffff;
+  border-radius: 5px 5px 0 0;
+  position: absolute;
+  padding: 3px 7px;
+  top: -24px;
+  left: 0;
+  cursor: pointer;
+  width: auto;
+}
+.rollContain .list .tab {
+  left: 52px;
 }

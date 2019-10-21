@@ -8,9 +8,9 @@ import {$$}from './DOM.js'
 let parent = $$.query('.rollContain').elements ? $$.query('.rollContain') : $$.query('body')
 class Roller {
   constructor() {
-    ui(parent)
-    parent.add(save())
     $$.css('css/roller.css')
+    // parent.add(save())
+    ui(parent)
   }
 }
 
