@@ -21,6 +21,23 @@ window.addEventListener('keyup',e => {
     help($$.query('.contain'))
   }
 })
+
+
+// Remove with Button
+let widget = true,
+    wContain = $$.query('.rollContain'),
+    body = $$.query('body')
+button.onclick = _ => {
+  let app = $$.query('.contain')
+  if(widget) {
+    body.add(app)
+    wContain.elements.style.display = 'none'
+  } else {
+    wContain.add(app)
+    wContain.elements.style.display = 'block'
+  }
+  widget = !widget
+}
 /*
 // Working on turning into modules and will Reactify it ultimately
 function Roller(){

@@ -31,6 +31,8 @@ LI > UL{
 .roller {
   grid-area: 2/1/5/3;
   display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: 20px 20px 1fr;
 }
 .list {
   grid-area: 2/3/5/4;
@@ -53,17 +55,15 @@ LI > UL{
 
 
 .roll{
-  width: 83%;
+  border: 1px solid;
+  grid-area: 2/1/3/2;
 }
 .save{
-  width: 15%;
-}
-.roll, .save {
-  height: 10%;
+  grid-area: 2/2/3/3;
 }
 .result{
-  width: 100%;
-  height:100%;
+  grid-area: 3/1/4/3;
+  background: red;
   overflow-y:auto;
 }
 .list LI{
@@ -85,9 +85,6 @@ LI > UL{
   padding: 0 2px;
   width: 100%;
   height: calc(100% - 20px);
-}
-.rollContain .listCont{
-  height: 100%;
 }
 .saved{
   margin: 0;
@@ -117,7 +114,7 @@ LI > UL{
 .max{
   color:#2f2;
 }
-.helpBlur{
+/* .helpBlur{
   background:rgba(0,0,0,0.8);
   display: flex;
   justify-content: center;
@@ -138,7 +135,7 @@ LI > UL{
 .helpContain LI{
   margin-bottom: 2px;
 }
-
+ */
 /* widget Styles */
 .rollContain .contain {
   height: 100%;
@@ -147,11 +144,14 @@ LI > UL{
 .rollContain .content {
   grid-area: 2/1/span 3/span 3;
 }
-.rollContain .list {
-  border-left: none;
-}
 .rollContain .content:focus {
   z-index: 1;
+}
+.rollContain .roller {
+  grid-template-rows: 20px 1fr;
+}
+.rollContain .list {
+  border-left: none;
 }
 .rollContain .tab {
   background: #ffff;
@@ -165,4 +165,16 @@ LI > UL{
 }
 .rollContain .list .tab {
   left: 52px;
+}
+.rollContain .roll{
+  grid-area: 1/1/2/2;
+}
+.rollContain .save{
+  grid-area: 1/2/2/3;
+}
+.rollContain .result{
+  grid-area: 2/1/3/3;
+}
+.rollContain .listCont{
+  height: 100%;
 }
