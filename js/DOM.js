@@ -8,9 +8,9 @@ class DOM {
   query(selector,context = document) {
     return copyProto({elements:context.querySelector(selector)})
   }
-  queryAll(selector,context = document) {
-    return copyProto({elements:[...context.querySelectorAll(selector)]})
-  }
+  // queryAll(selector,context = document) {
+  //   return copyProto({elements:[...context.querySelectorAll(selector)]})
+  // }
   add(content) {
     if(content){
       if(typeof content !== "object") {
@@ -25,10 +25,6 @@ class DOM {
       this.elements.removeChild(content.elements)
       return this
     }
-  }
-  text(text) {
-    this.elements.textContent = text
-    return this
   }
   create(content) {
     let node = document.createElement('div')
@@ -50,6 +46,18 @@ class DOM {
     link.type = 'image/x-icon'
     link.href = './img/favicon.ico'
     after.parentNode.insertBefore(link,after)
+  }
+  set text(text) {
+    this.elements.textContent = text
+  }
+  set click(handle) {
+    this.elements.onclick = handle
+  }
+  set dblclick(handle) {
+    this.elements.ondblclick = handle
+  }
+  get value() {
+    return this.elements.value
   }
 }
 

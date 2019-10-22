@@ -1,19 +1,19 @@
-* {
+.dr_contain * {
   margin:0;
   padding:0;
   border:0;
   box-sizing: border-box;
   font-family: sans-serif;
 }
-UL{
+.dr_contain UL{
   list-style-type:none;
   padding:0;
 }
-LI > UL{
+.dr_cantain LI > UL{
   padding-left: 25px;
 }
 /* Default styles */
-.contain{
+.dr_contain{
   display: grid;
   height: 100vh;
   width: 100vw;
@@ -21,79 +21,91 @@ LI > UL{
   grid-template-rows: auto repeat(3,1fr);
   overflow: hidden;
 }
-.content{
+.dr_contain [type='button'] {
+  border: 1px solid #000;
+  border-radius: 3px;
+  background: #78909c;
+  color: #fff;
+  cursor: pointer;
+}
+.dr_usage{
+  text-align: center;
+  pointer-events: none;
+  grid-area: 1 / 2 / 1 / 3;
+  margin: 5px 0 10px;
+}
+.dr_usage SPAN{
+  margin-left: 5px;
+}
+.dr_content{
   background: #FFF;
-  border-top: 1px solid;
-  border-bottom: 1px solid;
+  border-top: 1px solid #0005;
+  border-bottom: 1px solid #0005;
   padding: 10px;
   position: relative;
 }
-.roller {
+.dr_roller {
   grid-area: 2/1/5/3;
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-column-gap: 10px;
+  grid-template-columns: 5fr repeat(2,1fr);
   grid-template-rows: 20px 20px 1fr;
 }
-.list {
+.dr_list {
   grid-area: 2/3/5/4;
-  border-left: 1px solid;
+  border-left: 1px solid #0005;
 }
-.tab {
+.dr_tab {
   width: 100%;
-  background: blue;
 }
-.usage{
-  text-align: center;
-  pointer-events: none;
-  grid-area: 1 / 1 / 1 / span 3;
-  margin: 10px 0;
-}
-.usage P{
-  margin: 0;
-}
-
-
-
-.roll{
-  border: 1px solid;
+.dr_roll{
+  border-bottom: 1px solid;
   grid-area: 2/1/3/2;
 }
-.save{
-  grid-area: 2/2/3/3;
+.dr_saveButton{
+  grid-area: 2/2/3/4;
 }
-.result{
-  grid-area: 3/1/4/3;
-  background: red;
+.dr_result{
+  grid-area: 3/1/4/4;
   overflow-y:auto;
 }
-.list LI{
+.dr_disabled{
+  color:#f22;
+}
+.dr_max{
+  color:#2f2;
+}
+
+
+
+.dr_list LI{
   margin:2px 0;
   width:100%;
   height: 20px;
   display: flex;
   align-items: center;
 }
-.list LI:hover{
+.dr_list LI:hover{
   background:#555;
   color:#fff;
   cursor:default;
 }
-.listCont{
-  background:#eee;
+.dr_listCont{
+  background: #b0bec5;
   overflow-y:auto;
   overflow-x:hidden;
   padding: 0 2px;
   width: 100%;
   height: calc(100% - 20px);
 }
-.saved{
+.dr_saved{
   margin: 0;
 }
-.list LI SPAN:last-child{
+.dr_list LI SPAN:last-child{
   width: 100%;
   padding-left: 5px;
 }
-.delete{
+.dr_delete{
   color:#eee;
   margin-right:4px;
   height: 16px;
@@ -102,58 +114,60 @@ LI > UL{
   font-size:14px;
   order: 2;
 }
-.delete:hover{
+.dr_delete:hover{
   background:#999;
   color:#555;
   cursor:default;
   border-radius:50%;
 }
-.disabled{
-  color:#f22;
-}
-.max{
-  color:#2f2;
-}
-/* .helpBlur{
+
+
+.dr_helpBlur{
   background:rgba(0,0,0,0.8);
   display: flex;
   justify-content: center;
   grid-area: 1/1/span 4/span 3;
+  z-index: 2;
 }
-.helpContain{
+.dr_helpContain{
   background:#fff;
   align-self: center;
   padding: 8px;
-  max-width: 90%;
   border-radius: 5px;
 }
-.helpBlur.small .helpContain{
-  overflow-y: scroll;
-  border-radius: 0;
-  align-self: initial;
-}
-.helpContain LI{
+.dr_helpContain LI{
   margin-bottom: 2px;
 }
- */
+
 /* widget Styles */
-.rollContain .contain {
+.rollContain .dr_contain {
   height: 100%;
   width: 100%;
 }
-.rollContain .content {
+.rollContain .dr_usage{
+  grid-area: 1 / 2 / 1 / 4;
+}
+.rollContain .dr_content {
   grid-area: 2/1/span 3/span 3;
 }
-.rollContain .content:focus {
+.rollContain .dr_content:focus {
+  outline: none;
   z-index: 1;
 }
-.rollContain .roller {
+.rollContain .dr_list:focus + .dr_roller .dr_tab,
+.rollContain .dr_list .dr_tab  {
+  box-shadow: 0 -10px 20px inset #0005;
+}
+.rollContain .dr_list:focus .dr_tab  {
+  box-shadow: none;
+}
+.rollContain .dr_roller {
   grid-template-rows: 20px 1fr;
 }
-.rollContain .list {
+.rollContain .dr_list {
   border-left: none;
 }
-.rollContain .tab {
+.rollContain .dr_tab {
   background: #ffff;
   border-radius: 5px 5px 0 0;
   position: absolute;
@@ -163,18 +177,30 @@ LI > UL{
   cursor: pointer;
   width: auto;
 }
-.rollContain .list .tab {
+.rollContain .dr_list .dr_tab {
   left: 52px;
 }
-.rollContain .roll{
+.rollContain .dr_roll{
   grid-area: 1/1/2/2;
 }
-.rollContain .save{
-  grid-area: 1/2/2/3;
+.rollContain .dr_saveButton{
+  grid-area: 1/3/2/4;
 }
-.rollContain .result{
-  grid-area: 2/1/3/3;
+.rollContain .dr_result{
+  grid-area: 2/1/3/4;
 }
-.rollContain .listCont{
+.rollContain .dr_listCont{
   height: 100%;
+}
+.rollContain .dr_helpContain{
+  overflow-y: scroll;
+  border-radius: 0;
+  align-self: initial;
+}
+.rollContain .dr_hide_widg,
+.dr_hide {
+  display: none;
+}
+.rollContain .dr_hide {
+  display: inline;
 }

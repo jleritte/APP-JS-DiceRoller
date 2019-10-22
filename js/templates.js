@@ -1,27 +1,28 @@
 import {$$} from './DOM.js'
 
 //HTML Templates in string format
-let uiContent = ["<div class=\"contain\">",
-  "<div class=\"list content\" tabindex=\"1\">",
-    "<div class=\"tab\">Saves</div>",
-    "<div class=\"listCont\">",
-      "<ul class=\"saved\"></ul>",
+let uiContent = ["<div class=\"dr_contain\">",
+  "<div class=\"dr_list dr_content\" tabindex=\"1\">",
+    "<div class=\"dr_tab\">Saves</div>",
+    "<div class=\"dr_listCont\">",
+      "<ul class=\"dr_saved\"></ul>",
     "</div>",
   "</div>",
-  "<div class=\"roller content\" tabindex=\"1\">",
-    "<div class=\"tab\">Rolls</div>",
-    "<input class=\"roll\" type=\"text\" value=\"d%+4dF+5d8+4-2+6d12r3v2^4!6\"></input>",
-    "<input class=\"save\" type=\"button\" value=\"Save\"></input>",
-    "<div class=\"result\"></div>",
+  "<div class=\"dr_roller dr_content\" tabindex=\"1\">",
+    "<div class=\"dr_tab\">Rolls</div>",
+    "<input class=\"dr_roll\" type=\"text\" value=\"d%+4dF+5d8+4-2+6d12r3v2^4!6\"></input>",
+    "<input class=\"dr_rollButton dr_hide\" type=\"button\" value=\"Roll\"></input>",
+    "<input class=\"dr_saveButton\" type=\"button\" value=\"Save\"></input>",
+    "<div class=\"dr_result\"></div>",
   "</div>",
-  "<div class=\"usage\">",
-    "<p>Type Roll below - Hit Enter to roll</p>",
-    "<p>Press F1 to toggle Help</p>",
+  "<div class=\"dr_usage\">",
+    "<span class=\"dr_hide_widg\">Type Roll below - Hit Enter to roll</span>",
+    "<span class=\"dr_hide_widg\">Press F1</span><span class=\"dr_hide\">Click here</span> to toggle Help",
   "</div>",
 "</div>"].join(''),
-  saveContent = ["<li><span class=\"delete\">X</span><span></span></li>"].join(''),
-  helpContent = ["<div class=\"helpBlur\">",
-      "<div class='helpContain'>",
+  saveContent = ["<li><span class=\"dr_delete\">X</span><span></span></li>"].join(''),
+  helpContent = ["<div class=\"dr_helpBlur\">",
+      "<div class='dr_helpContain'>",
         "<ul>",
           "<li>Standard Notation is <b>NdX</b>. It can be chained <b>NdX+NdX</b>. Empty <b>N</b> will counts as an 1.</li>",
           "<li>eg. <b>4d6</b> will roll 4 6-sided dice and <b>d6</b> will roll just 1.</li>",
@@ -53,8 +54,11 @@ export function ui(parent) {
   // }
 }
 
-export function save() {
-  return $$.create(saveContent)
+export function save(name,roll) {
+  let saved = $$.create(saveContent)
+  saved.text = name
+  saved.elements.title = roll6
+  return saved
 }
 
 let helpVisable = 0, helpele = $$.create(helpContent)

@@ -268,7 +268,7 @@ function addToRoll(adder,roll){
 }
 //Function to convert values to negative for subtraction
 function convertToNeg(roll,adder){
-  console.log(roll,adder)
+  // console.log(roll,adder)
   if(typeof roll === 'object'){
     roll.forEach(function(e){
       if(typeof e !== 'object'){

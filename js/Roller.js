@@ -15,100 +15,113 @@ class Roller {
 }
 
 new Roller()
+
 window.addEventListener('keyup',e => {
-  if(e.which === 13) {
-    console.log('enter hit')
-    help($$.query('.contain'))
+  if(e.which === 112) {
+    help($$.query('.dr_contain'))
+  }
+  if(e.which === 13){
+    getResult()
   }
 })
-
-
-// Remove with Button
-let widget = true,
-    wContain = $$.query('.rollContain'),
-    body = $$.query('body')
-button.onclick = _ => {
-  let app = $$.query('.contain')
-  if(widget) {
-    body.add(app)
-    wContain.elements.style.display = 'none'
-  } else {
-    wContain.add(app)
-    wContain.elements.style.display = 'block'
+window.addEventListener('keydown',function(e){
+  if(e.which === 112){
+    e.preventDefault();
   }
-  widget = !widget
-}
-/*
+});
+
+$$.query('.dr_rollButton').click = getResult
+$$.query('.dr_saveButton').click = saveRoll
+
+
+// REMOVE THIS CODE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  let widget = true,
+      wContain = $$.query('.rollContain'),
+      body = $$.query('body')
+  button.onclick = _ => {
+    let app = $$.query('.dr_contain')
+    if(widget) {
+      body.add(app)
+      wContain.elements.style.display = 'none'
+    } else {
+      wContain.add(app)
+      wContain.elements.style.display = 'block'
+    }
+    widget = !widget
+  }
+// REMOVE THIS CODE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 // Working on turning into modules and will Reactify it ultimately
-function Roller(){
-  var _private = {
-    'saved': localStorage.savedRolls ? JSON.parse(localStorage.savedRolls): {},
-    'buildGUI': buildGUI,
-    'loadStyles': loadStyles
-  },
-  utils = new Utils();
+// function Roller(){
+//   var private = {
+//     'saved': localStorage.savedRolls ? JSON.parse(localStorage.savedRolls): {},
+//     'buildGUI': buildGUI,
+//     'loadStyles': loadStyles
+//   },
+//   utils = new Utils();
 
-//Function that loads the saved rolls and fills the GUi
-    var template = document.querySelector('template.save'),
-        list = document.querySelector('ul.saved');
-    for(var roll in _private.saved){
-      var li = document.importNode(template.content,true);
-      list.appendChild(li);
-      li = list.lastElementChild;
-      li.firstElementChild.addEventListener('click',deleteR);
-      li.lastElementChild.textContent = roll;
-      li.addEventListener('dblclick',fillI);
-    }
-    function deleteR(e) {
-      utils.deleteRoll(e.target);
-    }
-    function fillI(e) {
-      utils.fillInput(e.target);
-    }
-  }
-//Adds the event listeners for different key strokes
-  function connectKey(){
-    document.addEventListener('keydown',function(e){
-      if(e.which === 112){
-        e.preventDefault();
-      }
-    });
-    document.addEventListener('keyup',function(e){
-      if(e.which === 13){
-        utils.getResult();
-      }
-      else if(e.which === 27){
-        utils.clearResult();
-      }
-      else if(e.which === 112){
-        toggleHelp();
-      }
-    });
-    document.querySelector('.roll').addEventListener('keyup',function(e){
-      if(e.which === 57){
-        autoParen(e.target);
-      }
-    });
-  }
-//Adds a closing parenthese to the end of the string
-  function autoParen(input){
-    var start = input.selectionStart,
-        end = input.selectionEnd;
-    input.value += ')';
-    input.setSelectionRange(start,end);
-  }
-//adds the event listener for the save button
-  function connectButton(butt){
-    butt.addEventListener('click', function(){utils.saveRoll();});
-  }
-//Public functions
-  Object.defineProperties(this,{
-    'init': {
-      value: _init.bind(_private),
-      emunerable: true
-    }
-  });
-}
+// //Function that loads the saved rolls and fills the GUi
+//     var template = document.querySelector('template.save'),
+//         list = document.querySelector('ul.saved');
+//     for(var roll in private.saved){
+//       var li = document.importNode(template.content,true);
+//       list.appendChild(li);
+//       li = list.lastElementChild;
+//       li.firstElementChild.addEventListener('click',deleteR);
+//       li.lastElementChild.textContent = roll;
+//       li.addEventListener('dblclick',fillI);
+//     }
+//     function deleteR(e) {
+//       utils.deleteRoll(e.target);
+//     }
+//     function fillI(e) {
+//       utils.fillInput(e.target);
+//     }
+//   }
+// //Adds the event listeners for different key strokes
+//   function connectKey(){
+//     document.addEventListener('keydown',function(e){
+//       if(e.which === 112){
+//         e.preventDefault();
+//       }
+//     });
+//     document.addEventListener('keyup',function(e){
+//       if(e.which === 13){
+//         utils.getResult();
+//       }
+//       else if(e.which === 27){
+//         utils.clearResult();
+//       }
+//       else if(e.which === 112){
+//         toggleHelp();
+//       }
+//     });
+//     document.querySelector('.roll').addEventListener('keyup',function(e){
+//       if(e.which === 57){
+//         autoParen(e.target);
+//       }
+//     });
+//   }
+// //Adds a closing parenthese to the end of the string
+//   function autoParen(input){
+//     var start = input.selectionStart,
+//         end = input.selectionEnd;
+//     input.value += ')';
+//     input.setSelectionRange(start,end);
+//   }
+// //adds the event listener for the save button
+//   function connectButton(butt){
+//     butt.addEventListener('click', function(){utils.saveRoll();});
+//   }
+// //Public functions
+//   Object.defineProperties(this,{
+//     'init': {
+//       value: init.bind(_private),
+//       emunerable: true
+//     }
+//   });
+// }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // OLD UTILS CODE
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,74 +138,80 @@ function validateText(text){
   // if(splt.length > 1){
   //   return roll;
   // }
-  // return _private.error;
+  // return private.error;
 }
-
+let resultele, clear
 //Function to get the Result from the inputed roll
 function getResult(){
-  let result = document.querySelector('.roll').value
+  let result = $$.query('.dr_roll').value,
+      target = $$.query('.dr_result')
   if(validateText(result)){
+    if($$.query('.dr_dice').elements) {
+      clearResult()
+    }
     let dice = new DicePool(result).pool
-
-    document.querySelector('.result').innerHTML = _formatResult(dice);
-    var clear = document.createElement('button');
-    clear.textContent = 'Clear';
-    clear.addEventListener('click',_clearResult);
-    document.querySelector('.result').appendChild(clear);
+    resultele = formatResult(dice)
+    target.add(resultele)
+    clear = $$.create('<input type="button" value="Clear"/>');
+    clear.click = clearResult
+    target.add(clear)
   }
   else{
-    document.querySelector('.result').textContent = ERROR
+    target.text = ERROR
   }
 }
 
 //Function to clear the result contents
-function _clearResult(){
-  document.querySelector('.roll').value = '';
-  document.querySelector('.result').innerHTML = '';
+function clearResult(){
+  // document.querySelector('.roll').value = '';
+  $$.query('.dr_result').remove(resultele)
+  $$.query('.dr_result').remove(clear)
 }
 //Function used to save a roll and add it to the saved list
-function _saveRoll(){
-  var mtch = false, where, save = this.grabText();
-  if(save !== this.error){
+function saveRoll(){
+  var mtch = false, where, save = $$.query('.dr_roll').value
+  if(validateText(save)){
     var name = prompt("Enter Name For Roll",save);
     if(name === null) {
       return;
     }
-    for(var roll in this.saved){
-      if(this.saved[roll] === save){
+    for(var roll in saved){
+      if(saved[roll] === save){
         mtch = true;
         where = roll;
       }
     }
     if(!mtch){
-      if(this.saved[name]) {
+      if(saved[name]) {
         mtch=true;
       }
-      this.saved[name] = save;
+      saved[name] = save;
       if(!mtch){
-      var template = document.querySelector('template.save'),
-          list = document.querySelector('ul.saved'),
-          li = document.importNode(template.content,true);
-    list.appendChild(li);
-    li = list.lastElementChild;
-    li.firstElementChild.addEventListener('click',deleteR);
-    li.lastElementChild.textContent = name;
-    li.addEventListener('dblclick',fillI);
+
+        // TODO: Continue here
+        let template = document.querySelector('template.save'),
+            list = document.querySelector('ul.saved'),
+            li = document.importNode(template.content,true);
+        list.appendChild(li);
+        li = list.lastElementChild;
+        li.firstElementChild.addEventListener('click',deleteR);
+        li.lastElementChild.textContent = name;
+        li.addEventListener('dblclick',fillI);
       }
     }else{
       alert("Already saved as "+where);
     }
   }
-  localStorage.savedRolls = JSON.stringify(this.saved);
+  localStorage.savedRolls = JSON.stringify(saved);
   function deleteR(e) {
-    _deleteRoll(e.target);
+    deleteRoll(e.target);
   }
   function fillI(e) {
-    _fillInput(e.target);
+    fillInput(e.target);
   }
 }
 //Function to delete roll and remove from the saved list
-function _deleteRoll(roll){
+function deleteRoll(roll){
   var save = roll.parentElement.textContent;
   for(var rll in this.saved){
     if('x'+rll === save){
@@ -203,40 +222,39 @@ function _deleteRoll(roll){
   localStorage.savedRolls = JSON.stringify(this.saved);
 }
 //Function that formats the result for display in a human readable way
-function _formatResult(dice){
-  var result = '';
+function formatResult(dice){
+  let result = $$.create('<span class="dr_dice"></span>')
   for(var die in dice){
-    result += '<b>'+die+':</b> ';
-    die = dice[die];
+    result.add('<b>'+die+':</b> ')
+    die = dice[die]
     if(Array.isArray(die)){
       for(let i=0;i<die.length;i++){
         if(isNaN(die[i].value)){
-          var num = die[i].value;
-          num = num.replace(/[A-z]/g,'');
-          result += '<span class="disabled">'+num+'</span> ';
+          var num = die[i].value
+          num = num.replace(/[A-z]/g,'')
+          result.add('<span class="dr_disabled">'+num+'</span> ')
         }
         else{
           if(die[i].value === die[i].size){
-            result += '<span class="max">'+die[i].value+'</span> ';
+            result.add('<span class="dr_max">'+die[i].value+'</span> ')
           }
           else{
-            result += '<span>'+die[i].value+'</span> ';
+            result.add('<span>'+die[i].value+'</span> ')
           }
         }
       }
     }
     else{
-      result += die;
+      result.add('<span>'+die+'</span>')
     }
-    result += '</br>';
+    result.add('</br>')
   }
-  return result;
+  return result
 }
 //Function used to fill the Input from the saved list
-function _fillInput(roll){
+function fillInput(roll){
   var str = roll.textContent;
   document.querySelector('.roll').value = this.saved[str];
   window.location.hash = 'roll';
   this.getResult();
 }
-*/
