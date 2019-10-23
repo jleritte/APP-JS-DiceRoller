@@ -20,7 +20,7 @@ let uiContent = ["<div class=\"dr_contain\">",
     "<span class=\"dr_hide_widg\">Press F1</span><span class=\"dr_hide\">Click here</span> to toggle Help",
   "</div>",
 "</div>"].join(''),
-  saveContent = ["<li><span class=\"dr_delete\">X</span><span></span></li>"].join(''),
+  saveContent = ["<li><span></span><span class=\"dr_delete\">X</span></li>"].join(''),
   helpContent = ["<div class=\"dr_helpBlur\">",
       "<div class='dr_helpContain'>",
         "<ul>",
@@ -56,8 +56,9 @@ export function ui(parent) {
 
 export function save(name,roll) {
   let saved = $$.create(saveContent)
-  saved.text = name
-  saved.elements.title = roll6
+  $$.query('span',saved.elements).text = name
+  // saved.text = name
+  saved.elements.title = roll
   return saved
 }
 

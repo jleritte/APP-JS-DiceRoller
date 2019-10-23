@@ -68,6 +68,14 @@
 .dr_result{
   grid-area: 3/1/4/4;
   overflow-y:auto;
+  display: flex;
+  flex-direction: column;
+}
+.dr_result [type="button"] {
+  width: 25%;
+}
+.dr_row SPAN {
+  margin-left: 5px;
 }
 .dr_disabled{
   color:#f22;
@@ -101,7 +109,7 @@
 .dr_saved{
   margin: 0;
 }
-.dr_list LI SPAN:last-child{
+.dr_list LI SPAN:first-child{
   width: 100%;
   padding-left: 5px;
 }

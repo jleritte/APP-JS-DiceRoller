@@ -140,7 +140,7 @@ function validateText(text){
   // }
   // return private.error;
 }
-let resultele, clear
+let results, clear
 //Function to get the Result from the inputed roll
 function getResult(){
   let result = $$.query('.dr_roll').value,
@@ -150,8 +150,7 @@ function getResult(){
       clearResult()
     }
     let dice = new DicePool(result).pool
-    resultele = formatResult(dice)
-    target.add(resultele)
+    results = formatResult(dice)
     clear = $$.create('<input type="button" value="Clear"/>');
     clear.click = clearResult
     target.add(clear)
@@ -164,97 +163,96 @@ function getResult(){
 //Function to clear the result contents
 function clearResult(){
   // document.querySelector('.roll').value = '';
-  $$.query('.dr_result').remove(resultele)
+  while(results.length) {
+    $$.query('.dr_result').remove(results.pop())
+  }
   $$.query('.dr_result').remove(clear)
 }
 //Function used to save a roll and add it to the saved list
 function saveRoll(){
-  var mtch = false, where, save = $$.query('.dr_roll').value
-  if(validateText(save)){
-    var name = prompt("Enter Name For Roll",save);
+  let mtch = false, where, roll = $$.query('.dr_roll').value
+  if(validateText(roll)){
+    let name = prompt("Enter Name For Roll",roll);
     if(name === null) {
-      return;
+      return
     }
-    for(var roll in saved){
-      if(saved[roll] === save){
-        mtch = true;
-        where = roll;
+    for(let entry in saved){
+      if(saved[entry] === roll){
+        mtch = true
+        where = entry
       }
     }
     if(!mtch){
       if(saved[name]) {
-        mtch=true;
+        mtch=true
       }
-      saved[name] = save;
+      saved[name] = roll
       if(!mtch){
-
-        // TODO: Continue here
-        let template = document.querySelector('template.save'),
-            list = document.querySelector('ul.saved'),
-            li = document.importNode(template.content,true);
-        list.appendChild(li);
-        li = list.lastElementChild;
-        li.firstElementChild.addEventListener('click',deleteR);
-        li.lastElementChild.textContent = name;
-        li.addEventListener('dblclick',fillI);
+        let list = $$.query('ul.dr_saved'),
+            li = save(name, roll)
+        list.add(li)
+        $$.query('.dr_delete',li.elements).click = deleteR
+        li.dblclick = fillI
       }
     }else{
-      alert("Already saved as "+where);
+      alert("Already saved as "+where)
     }
   }
-  localStorage.savedRolls = JSON.stringify(saved);
+  // localStorage.savedRolls = JSON.stringify(saved);
   function deleteR(e) {
+    console.log('click to delete')
     deleteRoll(e.target);
   }
   function fillI(e) {
-    fillInput(e.target);
+    fillInput(e.target)
   }
 }
 //Function to delete roll and remove from the saved list
 function deleteRoll(roll){
-  var save = roll.parentElement.textContent;
-  for(var rll in this.saved){
-    if('x'+rll === save){
-      delete this.saved[rll];
+  let target = roll.parentElement.textContent
+  for(let rll in saved){
+    if(rll === target.substring(target.length-1)){
+      target = saved[rll]
+      delete saved[rll]
     }
   }
-  roll.parentElement.parentElement.removeChild(roll.parentElement);
-  localStorage.savedRolls = JSON.stringify(this.saved);
+  $$.query('.dr_saved').remove($$.query(`[title=${target}]`))
+  localStorage.savedRolls = JSON.stringify(saved);
 }
 //Function that formats the result for display in a human readable way
 function formatResult(dice){
-  let result = $$.create('<span class="dr_dice"></span>')
+  let result = $$.query('.dr_result'),rows = []
   for(var die in dice){
-    result.add('<b>'+die+':</b> ')
+    let row = $$.create('<span class="dr_row"></span>')
+    row.add('<b>'+die+':</b> ')
     die = dice[die]
     if(Array.isArray(die)){
       for(let i=0;i<die.length;i++){
         if(isNaN(die[i].value)){
           var num = die[i].value
           num = num.replace(/[A-z]/g,'')
-          result.add('<span class="dr_disabled">'+num+'</span> ')
+          row.add('<span class="dr_disabled">'+num+'</span> ')
         }
         else{
           if(die[i].value === die[i].size){
-            result.add('<span class="dr_max">'+die[i].value+'</span> ')
+            row.add('<span class="dr_max">'+die[i].value+'</span> ')
           }
           else{
-            result.add('<span>'+die[i].value+'</span> ')
+            row.add('<span>'+die[i].value+'</span> ')
           }
         }
       }
     }
     else{
-      result.add('<span>'+die+'</span>')
+      row.add('<span>'+die+'</span>')
     }
-    result.add('</br>')
+    result.add(row)
+    rows.push(row)
   }
-  return result
+  return rows
 }
 //Function used to fill the Input from the saved list
 function fillInput(roll){
-  var str = roll.textContent;
-  document.querySelector('.roll').value = this.saved[str];
-  window.location.hash = 'roll';
-  this.getResult();
+  $$.query('.dr_roll').value = saved[roll.textContent]
+  getResult()
 }

@@ -56,6 +56,9 @@ class DOM {
   set dblclick(handle) {
     this.elements.ondblclick = handle
   }
+  set value(input) {
+    this.elements.value = input
+  }
   get value() {
     return this.elements.value
   }
