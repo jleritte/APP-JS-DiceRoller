@@ -2,7 +2,6 @@
 let proto
 class DOM {
   constructor() {
-    console.log('DOM FUNCTIONS INIT')
     proto = Object.getPrototypeOf(this)
   }
   query(selector,context = document) {
@@ -62,10 +61,15 @@ class DOM {
   get value() {
     return this.elements.value
   }
+  get focus() {
+    this.elements.focus()
+    return this
+  }
 }
 
 function copyProto(newOb) {
   return Object.setPrototypeOf(newOb,proto)
 }
 
-export let $$ = new DOM()
+let $$ = new DOM()
+export default $$

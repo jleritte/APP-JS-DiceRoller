@@ -1,25 +1,27 @@
-import {$$} from './DOM.js'
+import $$ from './DOM.js'
+import h from './handlers.js'
+
 
 //HTML Templates in string format
 let uiContent = ["<div class=\"dr_contain\">",
-  "<div class=\"dr_list dr_content\" tabindex=\"1\">",
-    "<div class=\"dr_tab\">Saves</div>",
-    "<div class=\"dr_listCont\">",
-      "<ul class=\"dr_saved\"></ul>",
+    "<div class=\"dr_list dr_content\" tabindex=\"1\">",
+      "<div class=\"dr_tab\">Saves</div>",
+      "<div class=\"dr_listCont\">",
+        "<ul class=\"dr_saved\"></ul>",
+      "</div>",
     "</div>",
-  "</div>",
-  "<div class=\"dr_roller dr_content\" tabindex=\"1\">",
-    "<div class=\"dr_tab\">Rolls</div>",
-    "<input class=\"dr_roll\" type=\"text\" value=\"d%+4dF+5d8+4-2+6d12r3v2^4!6\"></input>",
-    "<input class=\"dr_rollButton dr_hide\" type=\"button\" value=\"Roll\"></input>",
-    "<input class=\"dr_saveButton\" type=\"button\" value=\"Save\"></input>",
-    "<div class=\"dr_result\"></div>",
-  "</div>",
-  "<div class=\"dr_usage\">",
-    "<span class=\"dr_hide_widg\">Type Roll below - Hit Enter to roll</span>",
-    "<span class=\"dr_hide_widg\">Press F1</span><span class=\"dr_hide\">Click here</span> to toggle Help",
-  "</div>",
-"</div>"].join(''),
+    "<div class=\"dr_roller dr_content\" tabindex=\"1\">",
+      "<div class=\"dr_tab\">Rolls</div>",
+      "<input class=\"dr_roll\" type=\"text\"></input>",
+      "<input class=\"dr_rollButton dr_hide\" type=\"button\" value=\"Roll\"></input>",
+      "<input class=\"dr_saveButton\" type=\"button\" value=\"Save\"></input>",
+      "<div class=\"dr_result\"></div>",
+    "</div>",
+    "<div class=\"dr_usage\">",
+      "<span class=\"dr_hide_widg\">Type Roll below - Hit Enter to roll</span>",
+      "<span class=\"dr_hide_widg\">Press F1</span><span class=\"dr_hide\">Click here</span> to toggle Help",
+    "</div>",
+  "</div>"].join(''),
   saveContent = ["<li><span></span><span class=\"dr_delete\">X</span></li>"].join(''),
   helpContent = ["<div class=\"dr_helpBlur\">",
       "<div class='dr_helpContain'>",
@@ -44,30 +46,62 @@ let uiContent = ["<div class=\"dr_contain\">",
     "</div>"].join('')
 
 // Functions to convert Templates HTML
+let uiele = $$.create(uiContent),
+  helpVisable = 0,
+  helpele = $$.create(helpContent),
+  keySet = false
+
 export function ui(parent) {
   if(!parent) return
-  let uiele = $$.create(uiContent)
+  if(parent.elements === document.body) {
+    $$.css('css/fullPage.css')
+    $$.query('title').text = 'Dice Roller'
+    $$.icon()
+    attachKeyHandlers()
+  } else {
+    $$.query('.dr_usage',node).click = helpHandle
+    helpele.click = helpHandle
+  }
+  let node = uiele.elements
+  $$.query('.dr_rollButton',node).click = h.roll
+  $$.query('.dr_saveButton',node).click = h.save
   parent.add(uiele)
-  // if(parent.elements === document.body) {
-  //   $$.query('title').text('Dice Roller')
-  //   $$.icon()
-  // }
+  h.load()
 }
+
 
 export function save(name,roll) {
   let saved = $$.create(saveContent)
   $$.query('span',saved.elements).text = name
-  // saved.text = name
   saved.elements.title = roll
   return saved
 }
 
-let helpVisable = 0, helpele = $$.create(helpContent)
 export function help(parent) {
   if(!parent) return
-  console.log(parent.elements,helpele.elements)
-  if(parent.elements.clientHeight < 100)
-    console.log("tacos")
   helpVisable = !helpVisable
   helpVisable ? parent.add(helpele) : parent.remove(helpele)
+}
+
+function helpHandle() {
+  help(uiele)
+}
+
+function attachKeyHandlers() {
+  if(!keySet) {
+    window.addEventListener('keyup',e => {
+      // console.log(e)
+      switch(e.key) {
+        case 'Enter':   h.roll(); break
+        case 'Escape':  h.clear(); break
+        case 'F1':      helpHandle(); break
+      }
+    })
+    window.addEventListener('keydown',function(e){
+      if(e.key === 'F1'){
+        e.preventDefault()
+      }
+    })
+    keySet = !keySet
+  }
 }

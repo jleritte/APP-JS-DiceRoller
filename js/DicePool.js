@@ -67,7 +67,7 @@ function processDice(rollStr){
 
   return temp.reduce((acc,cur,i,array) => {
     if(typeof cur === 'object'){
-      let temp = cur.note;
+      let temp = cur.note
       if(temp in acc){
         acc[temp].push(cur)
       } else {
