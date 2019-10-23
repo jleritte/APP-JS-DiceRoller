@@ -23,6 +23,9 @@ window.addEventListener('keyup',e => {
   if(e.which === 13){
     getResult()
   }
+  if(e.which === 27){
+    clearResult()
+  }
 })
 window.addEventListener('keydown',function(e){
   if(e.which === 112){
@@ -52,14 +55,6 @@ $$.query('.dr_saveButton').click = saveRoll
 // REMOVE THIS CODE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-// Working on turning into modules and will Reactify it ultimately
-// function Roller(){
-//   var private = {
-//     'saved': localStorage.savedRolls ? JSON.parse(localStorage.savedRolls): {},
-//     'buildGUI': buildGUI,
-//     'loadStyles': loadStyles
-//   },
-//   utils = new Utils();
 
 // //Function that loads the saved rolls and fills the GUi
 //     var template = document.querySelector('template.save'),
@@ -79,24 +74,6 @@ $$.query('.dr_saveButton').click = saveRoll
 //       utils.fillInput(e.target);
 //     }
 //   }
-// //Adds the event listeners for different key strokes
-//   function connectKey(){
-//     document.addEventListener('keydown',function(e){
-//       if(e.which === 112){
-//         e.preventDefault();
-//       }
-//     });
-//     document.addEventListener('keyup',function(e){
-//       if(e.which === 13){
-//         utils.getResult();
-//       }
-//       else if(e.which === 27){
-//         utils.clearResult();
-//       }
-//       else if(e.which === 112){
-//         toggleHelp();
-//       }
-//     });
 //     document.querySelector('.roll').addEventListener('keyup',function(e){
 //       if(e.which === 57){
 //         autoParen(e.target);
@@ -162,7 +139,7 @@ function getResult(){
 
 //Function to clear the result contents
 function clearResult(){
-  // document.querySelector('.roll').value = '';
+  // $$.query('.dr_roll').value = ''
   while(results.length) {
     $$.query('.dr_result').remove(results.pop())
   }
@@ -198,7 +175,7 @@ function saveRoll(){
       alert("Already saved as "+where)
     }
   }
-  // localStorage.savedRolls = JSON.stringify(saved);
+  localStorage.savedRolls = JSON.stringify(saved);
   function deleteR(e) {
     console.log('click to delete')
     deleteRoll(e.target);
@@ -209,14 +186,14 @@ function saveRoll(){
 }
 //Function to delete roll and remove from the saved list
 function deleteRoll(roll){
-  let target = roll.parentElement.textContent
+  let target = roll.previousElementSibling.textContent
   for(let rll in saved){
-    if(rll === target.substring(target.length-1)){
+    if(rll === target){
       target = saved[rll]
       delete saved[rll]
     }
   }
-  $$.query('.dr_saved').remove($$.query(`[title=${target}]`))
+  $$.query('.dr_saved').remove($$.query(`[title="${target}"]`))
   localStorage.savedRolls = JSON.stringify(saved);
 }
 //Function that formats the result for display in a human readable way
