@@ -1,5 +1,5 @@
 // DOM FUNCTIONS
-let proto, local = /[localhost|127.0.0.1]/.test(window.location) ? "" : 'https://jleritte.github.io/roller/'
+let proto, local = /localhost|127\.0\.0\.1/.test(window.location) ? "" : 'https://jleritte.github.io/roller/'
 
 class DOM {
   constructor() {
