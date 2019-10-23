@@ -1,8 +1,8 @@
 // DOM FUNCTIONS
-let proto
+let proto, local = /localhost|127\.0\.0\.1/.test(window.location) ? "" : 'https://jleritte.github.io/roller/'
+
 class DOM {
   constructor() {
-    console.log('DOM FUNCTIONS INIT')
     proto = Object.getPrototypeOf(this)
   }
   query(selector,context = document) {
@@ -36,7 +36,7 @@ class DOM {
       after = document.querySelector('title')
     link.rel = 'stylesheet'
     link.type = 'text/css'
-    link.href = url
+    link.href = local + url
     after.parentNode.insertBefore(link,after)
   }
   icon() {
@@ -44,7 +44,7 @@ class DOM {
       after = document.querySelector('title')
     link.rel = 'icon'
     link.type = 'image/x-icon'
-    link.href = './img/favicon.ico'
+    link.href = local + 'img/favicon.ico'
     after.parentNode.insertBefore(link,after)
   }
   set text(text) {
@@ -62,10 +62,15 @@ class DOM {
   get value() {
     return this.elements.value
   }
+  get focus() {
+    this.elements.focus()
+    return this
+  }
 }
 
 function copyProto(newOb) {
   return Object.setPrototypeOf(newOb,proto)
 }
 
-export let $$ = new DOM()
+let $$ = new DOM()
+export default $$
