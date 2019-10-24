@@ -1,5 +1,3 @@
-Here is a [Demo][1]
-
 This can be run as a widget or a full page application
 
 To run as a widget on your webpage add
