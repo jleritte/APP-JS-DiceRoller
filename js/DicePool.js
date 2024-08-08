@@ -93,7 +93,7 @@ function processDice(rollStr){
 }
 //Takes a string notation and converts *d* into array of dice or number into int
 function getDice(note){
-  let num,sides,dice,roll,fudge = false
+  let num,sides,dice,roll,fate = false
   if(/\d*d\d+/.test(note)){
     roll = note.split('d')
     num = isNaN(parseInt(roll[0])) ? 1 : Math.abs(roll[0])
@@ -104,7 +104,7 @@ function getDice(note){
     sides = 10
   }
   else if(/\d*dF/.test(note)){
-    fudge = true
+    fate = true
     roll = note.split('d')
     num = isNaN(parseInt(roll[0])) ? 1 : Math.abs(roll[0])
     sides = 6
@@ -113,23 +113,12 @@ function getDice(note){
     return parseInt(note)
   }
   dice = new Array(num).fill(0).map(_ => new Die(note,sides))
-  if(fudge) convertToFudge(note,dice)
+  if(fate) convertToFate(note,dice)
   return dice
 }
 //Converts dice to Fudge/Fate dice
-function convertToFudge(note,dice){
-  return dice.map(e => {
-    let tmp = e.value
-    if(tmp === 2||tmp === 3){
-      e.value = -1
-    }
-    else if(tmp === 4||tmp === 6){
-      e.value = 0
-    }
-    else if(tmp === 1||tmp === 5){
-      e.value = 1
-    }
-  })
+function convertToFate(note,dice){
+  return dice.map(e => { e.value = Math.ceil(e.value / 2) - 2 })
 }
 //Switch to handle how to process Roll notations
 function operate(op,o1,o2){
